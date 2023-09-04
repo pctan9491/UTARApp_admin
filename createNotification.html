@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .btn.create {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Create Notification</h2>
+<form id="createNotificationForm">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+    
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+    
+    <label for="currentDate">Current Date:</label><br>
+    <input type="date" id="currentDate" name="currentDate"><br><br>
+    
+    <label for="photoUpload">Upload Photo:</label><br>
+    <input type="file" id="photoUpload" name="photoUpload" accept="image/*"><br><br>
+
+    <label for="fileUpload">Upload File:</label><br>
+    <input type="file" id="fileUpload" name="fileUpload"><br><br>
+
+    <button type="button" class="btn create" onclick="createNotification()">Create</button>
+</form>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+<script>
+    document.getElementById('currentDate').value = new Date().toISOString().slice(0, 10);  // Auto-fill current date
+
+       // Initialize Firebase
+        const firebaseConfig = {
+              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+  authDomain: "utarapp-9f3db.firebaseapp.com",
+  projectId: "utarapp-9f3db",
+  storageBucket: "utarapp-9f3db.appspot.com",
+  messagingSenderId: "331019317153",
+  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+function createNotification() {
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const currentDate = document.getElementById('currentDate').value;
+        const photoUpload = document.getElementById('photoUpload').files[0];
+        const fileUpload = document.getElementById('fileUpload').files[0];
+
+        const db = firebase.firestore();
+        const storage = firebase.storage().ref();
+
+        // Upload photo and file
+        let photoURL = '';
+        let fileURL = '';
+        if (photoUpload) {
+            const photoRef = storage.child('NotificationPhotos/' + photoUpload.name);
+            photoRef.put(photoUpload).then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            }).then(url => {
+                photoURL = url;
+
+                if (fileUpload) {
+                    const fileRef = storage.child('NotificationFiles/' + fileUpload.name);
+                    fileRef.put(fileUpload).then(snapshot => {
+                        return snapshot.ref.getDownloadURL();
+                    }).then(url => {
+                        fileURL = url;
+                        addNotificationToFirestore(title, description, currentDate, photoURL, fileURL);
+                    });
+                } else {
+                    addNotificationToFirestore(title, description, currentDate, photoURL, '');
+                }
+            });
+        } else if (fileUpload) {
+            const fileRef = storage.child('NotificationFiles/' + fileUpload.name);
+            fileRef.put(fileUpload).then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            }).then(url => {
+                fileURL = url;
+                addNotificationToFirestore(title, description, currentDate, '', fileURL);
+            });
+        } else {
+            addNotificationToFirestore(title, description, currentDate, '', '');
+        }
+    }
+	function addNotificationToFirestore(title, description, currentDate, photoURL, fileURL) {
+        const db = firebase.firestore();
+
+        // Add a new document in collection "notification"
+        db.collection("notification").add({
+            title: title,
+            description: description,
+            date: currentDate,
+            photoURL: photoURL,
+            fileURL: fileURL
+        })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            alert("Notification added successfully");
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+            alert("Error while adding notification");
+        });
+    }
+
+</script>
+
+</body>
+</html>
