@@ -34,10 +34,10 @@
     <input type="date" id="currentDate" name="currentDate"><br><br>
     
     <label for="photoUpload">Upload Photo:</label><br>
-    <input type="file" id="photoUpload" name="photoUpload" accept="image/*" multiple><br><br>
+    <input type="file" id="photoUpload" name="photoUpload" accept="image/*"><br><br>
 
     <label for="fileUpload">Upload File:</label><br>
-    <input type="file" id="fileUpload" name="fileUpload" multiple><br><br>
+    <input type="file" id="fileUpload" name="fileUpload"><br><br>
 
     <button type="button" class="btn create" onclick="createNotification()">Create</button>
 </form>
@@ -70,60 +70,59 @@ function createNotification() {
         const storage = firebase.storage().ref();
 
         // Upload photo and file
-        let photoURLs = [];
-    let fileURLs = [];
-	const uploadPromises = [];
-    // Handle photo uploads
-    for (let i = 0; i < photoUploads.length; i++) {
-        const photo = photoUploads[i];
-        const photoRef = storage.child('NotificationPhotos/' + photo.name);
-        const photoUploadPromise = photoRef.put(photo).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(url => {
-            photoURLs.push(url);
+        let photoURL = '';
+        let fileURL = '';
+        if (photoUpload) {
+            const photoRef = storage.child('NotificationPhotos/' + photoUpload.name);
+            photoRef.put(photoUpload).then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            }).then(url => {
+                photoURL = url;
+
+                if (fileUpload) {
+                    const fileRef = storage.child('NotificationFiles/' + fileUpload.name);
+                    fileRef.put(fileUpload).then(snapshot => {
+                        return snapshot.ref.getDownloadURL();
+                    }).then(url => {
+                        fileURL = url;
+                        addNotificationToFirestore(title, description, currentDate, photoURL, fileURL);
+                    });
+                } else {
+                    addNotificationToFirestore(title, description, currentDate, photoURL, '');
+                }
+            });
+        } else if (fileUpload) {
+            const fileRef = storage.child('NotificationFiles/' + fileUpload.name);
+            fileRef.put(fileUpload).then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            }).then(url => {
+                fileURL = url;
+                addNotificationToFirestore(title, description, currentDate, '', fileURL);
+            });
+        } else {
+            addNotificationToFirestore(title, description, currentDate, '', '');
+        }
+    }
+	function addNotificationToFirestore(title, description, currentDate, photoURL, fileURL) {
+        const db = firebase.firestore();
+
+        // Add a new document in collection "notification"
+        db.collection("notification").add({
+            title: title,
+            description: description,
+            date: currentDate,
+            photoURL: photoURL,
+            fileURL: fileURL
+        })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            alert("Notification added successfully");
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+            alert("Error while adding notification");
         });
-        uploadPromises.push(photoUploadPromise);
     }
-
-    // Handle file uploads
-    for (let i = 0; i < fileUploads.length; i++) {
-        const file = fileUploads[i];
-        const fileRef = storage.child('NotificationFiles/' + file.name);
-        const fileUploadPromise = fileRef.put(file).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(url => {
-            fileURLs.push(url);
-        });
-        uploadPromises.push(fileUploadPromise);
-    }
-
-    Promise.all(uploadPromises).then(() => {
-        addNotificationToFirestore(title, description, currentDate, photoURLs, fileURLs);
-    }).catch(error => {
-        console.error("Error uploading files:", error);
-        alert("Error while uploading files");
-    });
-    }
-	
-function addNotificationToFirestore(title, description, currentDate, photoURLs, fileURLs) {
-    const db = firebase.firestore();
-
-    db.collection("notification").add({
-        title: title,
-        description: description,
-        date: currentDate,
-        photoURLs: photoURLs,
-        fileURLs: fileURLs
-    })
-    .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-        alert("Notification added successfully");
-    })
-    .catch((error) => {
-        console.error("Error adding document: ", error);
-        alert("Error while adding notification");
-    });
-}
 
 </script>
 
