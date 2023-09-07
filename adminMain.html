@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Main Page</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+	.container {
+    display: none;
+}
+	</style>
 </head>
 <body class="bg-light">
 
@@ -13,12 +18,15 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="text-center mb-4">Admin Main Page</h2>
+                        <h2 class="text-center mb-4" id="mainTitle"></h2>
 
-                        <a href="notificationCRUD.html" class="btn btn-primary btn-block mb-3">Send Notification</a>
-                        <a href="#" class="btn btn-primary btn-block mb-3">Approve Student Information</a>
-                        <a href="timetable.html" class="btn btn-primary btn-block mb-3">Timetable</a>
-						<a href="#" class="btn btn-primary btn-block">...RELEASING...</a>
+<a href="notificationCRUD.html" class="btn btn-primary btn-block mb-3 notification-btn">Send Notification</a>
+<a href="#" class="btn btn-primary btn-block mb-3 approve-student-info-btn">Approve Student Information</a>
+<a href="timetable.html" class="btn btn-primary btn-block mb-3">Timetable</a>
+<a href="#" class="btn btn-primary btn-block mb-3 attendance-btn">Attendance</a>
+<a href="#" class="btn btn-primary btn-block">...RELEASING...</a>
+
+
                     </div>
                 </div>
             </div>
@@ -29,5 +37,53 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const loggedInUser = localStorage.getItem("saveLoginID");
+        console.log(loggedInUser);
+
+        db.collection("user").where("loginID", "==", loggedInUser).get()
+        .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                const userData = querySnapshot.docs[0].data();
+                const userType = userData.userType;
+				const title = document.getElementById("mainTitle");
+
+                if (userType === "administrator") {
+				title.textContent = "Admin Main Page";
+                    // Hide attendance for administrators
+                    document.querySelector(".attendance-btn").style.display = "none";
+					document.querySelector(".container").style.display = "block";
+                } else if (userType === "lecturer" || userType === "tutor") {
+				title.textContent = userType.charAt(0).toUpperCase() + userType.slice(1) + " Main Page";
+                    // Hide notification and student approval for lecturers and tutors
+                    document.querySelector(".notification-btn").style.display = "none";
+                    document.querySelector(".approve-student-info-btn").style.display = "none";
+					document.querySelector(".container").style.display = "block";
+                }
+            } else {
+                console.error("No user data found.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching user data:", error);
+        });
+    });  
+</script>
+
 </body>
 </html>

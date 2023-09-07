@@ -10,7 +10,19 @@
 </head>
 
 <body class="bg-light">
+	<script>
+	function checkOther(value) {
+    const otherInput = document.getElementById('otherFaculty');
+    if (value === 'other') {
+        otherInput.style.display = 'block';
+        otherInput.required = true;
+    } else {
+        otherInput.style.display = 'none';
+        otherInput.required = false;
+    }
+}
 
+	</script>
     <div class="container mt-5">
         <h2 class="mb-4">Add Timetable Entry</h2>
 
@@ -27,12 +39,11 @@
 
             <div class="form-group">
                 <label for="faculty">Faculty:</label>
-                <select class="form-control" id="faculty" name="faculty" required>
+                <select class="form-control" id="faculty" name="faculty" required onchange="checkOther(this.value)">
                     <option value="" disabled selected>Select a faculty</option>
                     <option value="FAM">FACULTY OF ACCOUNTANCY AND MANAGEMENT</option>
                     <option value="FAS">FACULTY OF ARTS AND SOCIAL SCIENCE</option>
                     <option value="FBF">FACULTY OF BUSINESS AND FINANCE</option>
-					                    <option value="" disabled selected>Select a faculty</option>
                     <option value="FCI">FACULTY OF CREATIVE INDUSTRIES</option>
                     <option value="FEGT">FACULTY OF ENGINEERING AND GREEN TECHNOLOGY</option>
                     <option value="FICT">FACULTY OF INFORMATION AND COMMUNICATION TECHNOLOGY</option>
@@ -42,7 +53,7 @@
                     <option value="MK FMHS">M. KANDIAH FACULTY OF MEDICINE AND HEALTH SCIENCES</option>
                     <option value="other">Others</option>
 </select>
-<input type="text" class="form-control mt-2" id="otherFaculty" name="otherFaculty" placeholder="Enter other faculty" style="display: none;">
+<input type="text" class="form-control mt-2" id="otherFaculty" name="otherFaculty" placeholder="Enter other faculty shortkey" style="display: none;">
             </div>
 
             <button type="submit" class="btn btn-primary">Add Entry</button>
@@ -53,17 +64,51 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 	<script>
-	function checkOther(value) {
-    const otherInput = document.getElementById('otherFaculty');
-    if (value === 'other') {
-        otherInput.style.display = 'block';
-        otherInput.required = true;
-    } else {
-        otherInput.style.display = 'none';
-        otherInput.required = false;
+	       // Initialize Firebase
+        const firebaseConfig = {
+              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+  authDomain: "utarapp-9f3db.firebaseapp.com",
+  projectId: "utarapp-9f3db",
+  storageBucket: "utarapp-9f3db.appspot.com",
+  messagingSenderId: "331019317153",
+  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+        };
+		firebase.initializeApp(firebaseConfig);
+		const db = firebase.firestore();
+		
+		document.getElementById('addTimetableForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    // Get the values from the form
+    const courseCode = document.getElementById('courseCode').value;
+    const courseTitle = document.getElementById('courseTitle').value;
+    let faculty = document.getElementById('faculty').value;
+
+    // If 'other' is selected, use the input value
+    if (faculty === 'other') {
+        faculty = document.getElementById('otherFaculty').value;
     }
-}
+
+    // Add the data to Firestore
+    db.collection('course').add({
+        courseCode: courseCode,
+        courseTitle: courseTitle,
+        faculty: faculty
+    })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+        alert('Timetable entry added successfully!');
+        // Reset the form
+        document.getElementById('addTimetableForm').reset();
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+        alert('Error while adding timetable entry. Please try again.');
+    });
+});
 
 	</script>
 </body>
