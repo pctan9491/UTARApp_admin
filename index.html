@@ -15,61 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
 <!-- Bootstrap JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .login-container label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .login-container button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-
-    
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
 
 </head>
 
@@ -80,17 +26,17 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="text-center">UTAR Admin Login</h2>
+                        <h2 class="text-center">UTAR Management Login</h2>
                         <form action="your_server_script_here" method="post">
                             <div class="form-group">
-                                <label for="adminID">Admin ID:</label>
-                                <input type="text" id="adminID" name="adminID" class="form-control" required>
+                                <label for="loginID">Login ID:</label>
+                                <input type="text" id="loginID" name="loginID" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password:</label>
                                 <input type="password" id="password" name="password" class="form-control" required>
                             </div>
-                            <button type="button" class="btn btn-primary btn-block" onclick="loginAdmin()">Login</button>
+                            <button type="button" class="btn btn-primary btn-block" onclick="loginFunction()">Login</button>
                         </form>
                     </div>
                 </div>
@@ -113,29 +59,46 @@
         firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-        async function loginAdmin() {
-            try {
-                const adminID = document.getElementById("adminID").value;
-                const password = document.getElementById("password").value;
+async function loginFunction() {
+    try {
+        const loginID = document.getElementById("loginID").value;
+        const password = document.getElementById("password").value;
 
-                const q = db.collection("user")
-                    .where("loginID", "==", adminID)
-                    .where("password", "==", password)
-                    .where("userType", "==", "administrator");
+        const adminQuery = db.collection("user")
+            .where("loginID", "==", loginID)
+            .where("password", "==", password)
+            .where("userType", "==", "administrator");
 
-                const querySnapshot = await q.get();
-                if (querySnapshot.empty) {
-                    // No matching documents.
-                    alert("Invalid admin credentials.");
-                    return;
-                }
+        const lecturerQuery = db.collection("user")
+            .where("loginID", "==", loginID)
+            .where("password", "==", password)
+            .where("userType", "==", "lecturer");
 
-                redirectToMain();
-            } catch (error) {
-                console.error("Error during login:", error);
-                alert("An error occurred during login. Please try again.");
-            }
+        const tutorQuery = db.collection("user")
+            .where("loginID", "==", loginID)
+            .where("password", "==", password)
+            .where("userType", "==", "tutor");
+
+        // Execute the queries and combine their results
+        const [adminSnapshot, lecturerSnapshot, tutorSnapshot] = await Promise.all([
+            adminQuery.get(), 
+            lecturerQuery.get(), 
+            tutorQuery.get()
+        ]);
+
+        if (!adminSnapshot.empty || !lecturerSnapshot.empty || !tutorSnapshot.empty) {
+            // A matching user is found.
+			localStorage.setItem("saveLoginID", loginID);
+            redirectToMain();
+        } else {
+            alert("Invalid credentials.");
         }
+    } catch (error) {
+        console.error("Error during login:", error);
+        alert("An error occurred during login. Please try again.");
+    }
+}
+
 
         function redirectToMain() {
             window.location.href = "adminMain.html";
