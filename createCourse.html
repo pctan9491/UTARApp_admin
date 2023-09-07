@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Timetable</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Add Timetable Entry</h2>
+
+        <form id="addTimetableForm">
+            <div class="form-group">
+                <label for="courseCode">Course Code:</label>
+                <input type="text" class="form-control" id="courseCode" name="courseCode" placeholder="Enter course code" required>
+            </div>
+
+            <div class="form-group">
+                <label for="courseTitle">Course Title:</label>
+                <input type="text" class="form-control" id="courseTitle" name="courseTitle" placeholder="Enter course title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="faculty">Faculty:</label>
+                <select class="form-control" id="faculty" name="faculty" required>
+                    <option value="" disabled selected>Select a faculty</option>
+                    <option value="FAM">FACULTY OF ACCOUNTANCY AND MANAGEMENT</option>
+                    <option value="FAS">FACULTY OF ARTS AND SOCIAL SCIENCE</option>
+                    <option value="FBF">FACULTY OF BUSINESS AND FINANCE</option>
+					                    <option value="" disabled selected>Select a faculty</option>
+                    <option value="FCI">FACULTY OF CREATIVE INDUSTRIES</option>
+                    <option value="FEGT">FACULTY OF ENGINEERING AND GREEN TECHNOLOGY</option>
+                    <option value="FICT">FACULTY OF INFORMATION AND COMMUNICATION TECHNOLOGY</option>
+					<option value="FSC">FACULTY OF SCIENCE</option>
+                    <option value="ICS">INSTITUTE OF CHINESE STUDIES</option>
+                    <option value="LKC FES">LEE KONG CHIAN FACULTY OF ENGINEERING AND SCIENCE</option>
+                    <option value="MK FMHS">M. KANDIAH FACULTY OF MEDICINE AND HEALTH SCIENCES</option>
+                    <option value="other">Others</option>
+</select>
+<input type="text" class="form-control mt-2" id="otherFaculty" name="otherFaculty" placeholder="Enter other faculty" style="display: none;">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Entry</button>
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JavaScript and other necessary scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+	function checkOther(value) {
+    const otherInput = document.getElementById('otherFaculty');
+    if (value === 'other') {
+        otherInput.style.display = 'block';
+        otherInput.required = true;
+    } else {
+        otherInput.style.display = 'none';
+        otherInput.required = false;
+    }
+}
+
+	</script>
+</body>
+
+</html>
