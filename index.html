@@ -64,32 +64,24 @@ async function loginFunction() {
         const loginID = document.getElementById("loginID").value;
         const password = document.getElementById("password").value;
 
-        const adminQuery = db.collection("user")
+        // Query based on loginID and password only
+        const query = db.collection("user")
             .where("loginID", "==", loginID)
-            .where("password", "==", password)
-            .where("userType", "==", "administrator");
+            .where("password", "==", password);
 
-        const lecturerQuery = db.collection("user")
-            .where("loginID", "==", loginID)
-            .where("password", "==", password)
-            .where("userType", "==", "lecturer");
+        const querySnapshot = await query.get();
 
-        const tutorQuery = db.collection("user")
-            .where("loginID", "==", loginID)
-            .where("password", "==", password)
-            .where("userType", "==", "tutor");
+        if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            const userType = userData.userType;
 
-        // Execute the queries and combine their results
-        const [adminSnapshot, lecturerSnapshot, tutorSnapshot] = await Promise.all([
-            adminQuery.get(), 
-            lecturerQuery.get(), 
-            tutorQuery.get()
-        ]);
-
-        if (!adminSnapshot.empty || !lecturerSnapshot.empty || !tutorSnapshot.empty) {
-            // A matching user is found.
-			localStorage.setItem("saveLoginID", loginID);
-            redirectToMain();
+            if (["administrator", "lecturer", "tutor"].includes(userType)) {
+                // If the user type is one of the allowed types
+                localStorage.setItem("saveLoginID", loginID);
+                redirectToMain();
+            } else {
+                alert("Invalid credentials.");
+            }
         } else {
             alert("Invalid credentials.");
         }
@@ -98,6 +90,7 @@ async function loginFunction() {
         alert("An error occurred during login. Please try again.");
     }
 }
+
 
 
         function redirectToMain() {
