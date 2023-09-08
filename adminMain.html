@@ -24,6 +24,7 @@
 <a href="#" class="btn btn-primary btn-block mb-3 approve-student-info-btn">Approve Student Information</a>
 <a href="timetable.html" class="btn btn-primary btn-block mb-3">Timetable</a>
 <a href="#" class="btn btn-primary btn-block mb-3 attendance-btn">Attendance</a>
+<a href="addLocation.html" class="btn btn-primary btn-block mb-3 location-btn">Add Location</a>
 <a href="#" class="btn btn-primary btn-block">...RELEASING...</a>
 
 
@@ -72,6 +73,7 @@
 				title.textContent = userType.charAt(0).toUpperCase() + userType.slice(1) + " Main Page";
                     // Hide notification and student approval for lecturers and tutors
                     document.querySelector(".notification-btn").style.display = "none";
+                    document.querySelector(".location-btn").style.display = "none";
                     document.querySelector(".approve-student-info-btn").style.display = "none";
 					document.querySelector(".container").style.display = "block";
                 }
