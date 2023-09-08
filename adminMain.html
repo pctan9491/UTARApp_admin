@@ -68,6 +68,7 @@
 				title.textContent = "Admin Main Page";
                     // Hide attendance for administrators
                     document.querySelector(".attendance-btn").style.display = "none";
+					document.querySelector(".location-btn").style.display = "block";
 					document.querySelector(".container").style.display = "block";
                 } else if (userType === "lecturer" || userType === "tutor") {
 				title.textContent = userType.charAt(0).toUpperCase() + userType.slice(1) + " Main Page";
