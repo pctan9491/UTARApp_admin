@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturer/Tutor - Add Timetable</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-4">Add Timetable Entry</h2>
+        <form id="timetableForm">
+
+<div class="form-group">
+    <label for="intakeTimeDropdown">Intake Time:</label>
+    <select class="form-control" id="intakeTimeDropdown" name="intakeTimeDropdown" required>
+        <!-- Options will be dynamically added -->
+    </select>
+	
+            <!-- Course Subject Dropdown -->
+            <div class="form-group">
+                <label for="courseDropdown">Course Subject:</label>
+                <select class="form-control" id="courseDropdown" name="courseDropdown" required>
+				<option value="" disabled selected>Select a course</option>
+                    <!-- Options will be dynamically added -->
+                </select>
+            </div>
+
+            <!-- Venue Dropdown -->
+            <div class="form-group">
+                <label for="venueDropdown">Venue:</label>
+                <select class="form-control" id="venueDropdown" name="venueDropdown" required>
+				<option value="" disabled selected>Select a class type first</option>
+                    <!-- Options can be hardcoded or fetched from the database -->
+                </select>
+            </div>
+
+            <!-- Type of Class Dropdown -->
+            <div class="form-group">
+                <label for="classTypeDropdown">Type of Class:</label>
+                <select class="form-control" id="classTypeDropdown" name="classTypeDropdown" required>
+				<option value="" disabled selected>Select a course first</option>
+                </select>
+            </div>
+
+            <!-- Time Input -->
+            <div class="form-group">
+                <label for="timeInput"> Start Time (only choose in 30 min and 00 min form):</label>
+                <input type="time" class="form-control" id="timeInput1" name="timeInput1" required>
+            </div>
+			
+			            <div class="form-group">
+                <label for="timeInput"> End Time (only choose in 30 min and 00 min form):</label>
+                <input type="time" class="form-control" id="timeInput2" name="timeInput2" required>
+            </div>
+
+            <!-- Day Dropdown -->
+            <div class="form-group">
+                <label for="dayDropdown">Day:</label>
+                <select class="form-control" id="dayDropdown" name="dayDropdown" required>
+				<option value="" disabled selected>Select a day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Add Entry</button>
+        </form>
+    </div>
+
+    <!-- Include Bootstrap JavaScript and other necessary scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+					<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const timeInput1 = document.getElementById('timeInput1');
+	const timeInput2 = document.getElementById('timeInput2');
+document.addEventListener('DOMContentLoaded', function() {
+    timeInput1.min = "08:00";
+    timeInput1.max = "18:00";
+	timeInput2.min = "08:00";
+    timeInput2.max = "18:00";
+
+    timeInput1.addEventListener('change', function() {
+        const selectedTime = this.value;
+        const allowedTimes = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30","13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30","17:00", "17:30","18:00"];
+
+        if (!allowedTimes.includes(selectedTime)) {
+            alert("Please select a valid time.");
+            timeInput1.value = "";  // Reset the time input value
+        }
+    });
+	    timeInput2.addEventListener('change', function() {
+        const selectedTime = this.value;
+        const allowedTimes = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30","13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30","17:00", "17:30","18:00"];
+
+        if (!allowedTimes.includes(selectedTime)) {
+            alert("Please select a valid time.");
+            timeInput2.value = "";  // Reset the time input value
+        }
+    });
+});
+
+	
+
+const venueDropdown = document.getElementById('venueDropdown');
+const timetableForm = document.getElementById('timetableForm');
+const intakeTimeDropdown = document.getElementById('intakeTimeDropdown');
+const loggedInUser = localStorage.getItem("saveLoginID");
+
+
+
+// Fetch classTypes when a course is selected
+// When a course is selected, load its class types
+courseDropdown.addEventListener('change', async () => {
+    const selectedCourse = courseDropdown.value;
+
+    const courseQuery = db.collection("course").where("courseCode", "==", selectedCourse);
+    const courseSnapshot = await courseQuery.get();
+    
+    if (!courseSnapshot.empty) {
+        const courseData = courseSnapshot.docs[0].data();
+
+        if (courseData.hasOwnProperty('classTypes')) {
+            const classTypes = courseData.classTypes; 
+
+            const classTypeDropdown = document.getElementById('classTypeDropdown');
+            classTypeDropdown.innerHTML = '<option value="" disabled selected>Select a class type</option>'; // Clear the dropdown and add a default option
+
+            classTypes.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                classTypeDropdown.appendChild(option);
+            });
+        }
+    }
+});
+
+
+// When a class type is selected, load the venues suitable for that class type
+const classTypeDropdown = document.getElementById('classTypeDropdown');
+classTypeDropdown.addEventListener('change', async () => {
+    const selectedClassType = classTypeDropdown.value;
+
+    try {
+        const venuesQuery = db.collection("location").where("classTypes", "array-contains", selectedClassType);
+        const venuesSnapshot = await venuesQuery.get();
+
+        venueDropdown.innerHTML = ''; // Clear the dropdown
+
+        if (!venuesSnapshot.empty) {
+            venuesSnapshot.forEach(doc => {
+                const data = doc.data();
+                const option = document.createElement('option');
+                option.value = data.venue; 
+                option.textContent = data.venue; 
+                venueDropdown.appendChild(option);
+            });
+        } else {
+            venueDropdown.innerHTML = '<option value="" disabled selected>No venues available</option>'; // Show no venues message
+        }
+    } catch (error) {
+        console.error("Error fetching venues:", error);
+        venueDropdown.innerHTML = '<option value="" disabled selected>Error loading venues</option>'; // Show error message
+    }
+});
+
+// Display hours input when a class type is selected
+classTypeDropdown.addEventListener('change', () => {
+    document.getElementById('timeInput1').style.display = 'block';
+document.getElementById('timeInput2').style.display = 'block';
+
+});
+
+
+// Load courses, intakes, and venues on page load
+async function loadInitialData() {
+    try {
+        // Load courses
+        const courseQuery = db.collection("course").where("lecturerTaken", "array-contains", loggedInUser);
+        const coursesSnapshot = await courseQuery.get();
+
+        coursesSnapshot.forEach(doc => {
+            const data = doc.data();
+            const option = document.createElement('option');
+            option.value = data.courseCode;
+            option.textContent = data.courseTitle;
+            courseDropdown.appendChild(option);
+        });
+
+
+        // Load intake times
+        const intakeQuery = db.collection("intake").where("active", "==", true);
+        const intakeSnapshot = await intakeQuery.get();
+        intakeSnapshot.forEach(doc => {
+            const data = doc.data();
+            const option = document.createElement('option');
+            option.value = data.intake;
+            option.textContent = data.intake;
+            intakeTimeDropdown.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
+}
+
+timetableForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Get form values
+    const selectedCourse = courseDropdown.value;
+    const selectedClassType = document.getElementById('classTypeDropdown').value;
+    const selectedVenue = venueDropdown.value;
+    const selectedIntakeTime = intakeTimeDropdown.value;
+    const selectedStartTime = document.getElementById('timeInput1').value;
+    const selectedEndTime = document.getElementById('timeInput2').value;
+    const selectedDay = document.getElementById('dayDropdown').value;
+
+    // Fetch all entries for the specific day and venue
+    const timetableCheck = await db.collection('timetable')
+                                   .where('day', '==', selectedDay)
+                                   .where('venue', '==', selectedVenue)
+                                   .get();
+
+    // Check for time overlaps client-side
+    const hasOverlap = timetableCheck.docs.some(doc => {
+        const entry = doc.data();
+        return (selectedStartTime < entry.endTime && selectedEndTime > entry.startTime);
+    });
+
+    if (hasOverlap) {
+        alert("There's already a timetable entry with the selected day, time, and venue. Please choose different values.");
+        return;  // Exit the function without saving the new entry
+    }
+
+    // Store in database
+    const timetableEntry = {
+        course: selectedCourse,
+        classType: selectedClassType,
+        venue: selectedVenue,
+        intakeTime: selectedIntakeTime,
+        startTime: selectedStartTime,
+        endTime: selectedEndTime,
+        day: selectedDay,
+        lecturerTutor: loggedInUser,
+        approved: false
+    };
+
+    try {
+        await db.collection('timetable').add(timetableEntry);
+        alert("Timetable entry added successfully!");
+    } catch (error) {
+        console.error("Error adding timetable entry:", error);
+        alert("An error occurred. Please try again.");
+    }
+});
+
+
+
+// Load initial data
+loadInitialData();
+</script>
+</body>
+
+</html>

@@ -85,7 +85,7 @@ const firebaseConfig = {
         try {
             // Fetch lecturers/tutors based on faculty
             const lecturerTutorQuery = db.collection("lecturer")
-                .where("faculty", "==", selectedFaculty);
+                .where('faculty', '==', selectedFaculty);
 
             const lecturersTutorsSnapshot = await lecturerTutorQuery.get();
             lecturersTutorsSnapshot.forEach(doc => {
@@ -97,7 +97,19 @@ const firebaseConfig = {
             });
 
             // Fetch courses based on faculty
-            const courseQuery = db.collection("course").where("faculty", "==", selectedFaculty);
+           const courseQuery = db.collection("course").where('faculty', 'array-contains', selectedFaculty);
+			courseQuery.get()
+    .then(coursesSnapshot => {
+        if (coursesSnapshot.empty) {
+            console.log("No matching courses found for faculty:", selectedFaculty);
+        } else {
+            // existing code to process the snapshot
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching courses:", error);
+    });
+
             const coursesSnapshot = await courseQuery.get();
             coursesSnapshot.forEach(doc => {
                 const data = doc.data();

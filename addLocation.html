@@ -24,6 +24,18 @@
                 <label for="maxPersonsInput">Maximum Persons Per Class:</label>
                 <input type="number" class="form-control" id="maxPersonsInput" name="maxPersonsInput" placeholder="Enter max persons" required min="1">
             </div>
+			
+			<div class="form-group">
+    <label>Suitable Class Type:</label><br>
+    <input type="checkbox" id="lecture" name="courseType" value="Lecture" checked disabled>
+    <label for="lecture">Lecture</label><br>
+
+    <input type="checkbox" id="tutorial" name="courseType" value="Tutorial">
+    <label for="tutorial">Tutorial</label><br>
+
+    <input type="checkbox" id="practical" name="courseType" value="Practical">
+    <label for="practical">Practical</label>
+</div>
 
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Add</button>
@@ -53,12 +65,14 @@ const firebaseConfig = {
 
         const locationValue = document.getElementById("locationInput").value;
         const maxPersonsValue = document.getElementById("maxPersonsInput").value;
+		const selectedTypes = Array.from(document.querySelectorAll('input[name="courseType"]:checked')).map(checkbox => checkbox.value);
 
         if (locationValue && maxPersonsValue) {
             try {
                 await db.collection("location").add({
                     venue: locationValue,
-                    maxSize: parseInt(maxPersonsValue)
+                    maxSize: parseInt(maxPersonsValue),
+					classTypes: selectedTypes
                 });
 
                 alert("Successfully added the location and class capacity!");
