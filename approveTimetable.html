@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Approve Timetable</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Timetable Approval</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Course</th>
+				<th>Lecturer Tutor</th>
+				<th>Class Type</th>
+                <th>Day</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Venue</th>
+                <th>Approval</th>
+            </tr>
+        </thead>
+        <tbody id="timetable-list">
+            <!-- The timetable entries will be populated here from Firebase -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+					<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<!-- TODO: Add your Firebase config and Firebase firestore SDK here -->
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+function loadTimetableData() {
+    const timetableCollection = db.collection('timetable');
+    timetableCollection.get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            // Fetch the lecturer's name based on the lecturerTutor ID
+            const lecturerId = data.lecturerTutor;
+            db.collection('lecturer').where('lectutId', '==', lecturerId).get()
+                .then((lecturerSnapshot) => {
+                    let lecturerName = "Unknown";  // default name in case no match is found
+                    lecturerSnapshot.forEach((lecturerDoc) => {
+                        lecturerName = lecturerDoc.data().name;  // Assuming the field for lecturer's name is 'name'
+                    });
+
+                    // Append the data to the table
+                    $('#timetable-list').append(`
+                        <tr>
+                            <td>${data.course}</td>
+                            <td>${lecturerName}</td>
+                            <td>${data.classType}</td>
+                            <td>${data.day}</td>
+                            <td>${data.startTime}</td>
+                            <td>${data.endTime}</td>
+                            <td>${data.venue}</td>
+                            <td><button class="btn btn-success" onclick="approveTimetable('${doc.id}')">Approve</button></td>
+                        </tr>
+                    `);
+                })
+                .catch((error) => {
+                    console.error("Error fetching lecturer name: ", error);
+                });
+        });
+    });
+}
+
+
+    function approveTimetable(timetableId) {
+        // Handle the approval logic here. You can update the Firestore document or whatever is needed.
+        console.log("Approving timetable with ID:", timetableId);
+    }
+
+    // Load the timetable data when the page loads
+    loadTimetableData();
+</script>
+</body>
+</html>
