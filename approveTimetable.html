@@ -157,7 +157,7 @@ console.log("Loading timetable data for type:", type);
             });
         });
     } else {
-        const timetableCollection = db.collection(type).where('approved', '==', false);
+        const timetableCollection = db.collection(type).where('approved', '==', false).where('rejection', '==', false);
         timetableCollection.get().then((snapshot) => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
