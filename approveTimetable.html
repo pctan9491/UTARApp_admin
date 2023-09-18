@@ -34,7 +34,7 @@
     <h2>Timetable Approval</h2>
 	
 	    <div>
-        <button class="btn btn-primary btn-custom" onclick="loadView('normal')">Normal Timetable</button>
+        <button class="btn btn-primary btn-custom" onclick="loadView('timetable')">Normal Timetable</button>
         <button class="btn btn-primary btn-custom" onclick="loadView('replacement')">Replacement Timetable</button>
         <button class="btn btn-primary btn-custom" onclick="loadView('cancellation')">Cancellation Timetable</button>
     </div>
@@ -54,7 +54,7 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody id="normal-timetable-list">
+        <tbody id="timetable-timetable-list">
             <!-- The timetable entries will be populated here from Firebase -->
         </tbody>
         </table>
@@ -122,14 +122,17 @@
     const db = firebase.firestore();
 
 function loadTimetableData(type) {
+console.log("Loading timetable data for type:", type);
     let targetElementId = `${type}-timetable-list`;
 	$(`#${targetElementId}`).empty();
 
     if (type === 'replacement' || type === 'cancellation') {
+	console.log("About to query Firestore for collection:", type);
         const collection = db.collection(type).where('approved', '==', false).where('rejection', '==', false)
         collection.get().then((snapshot) => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
+				console.log(`Fetched data for ${type}:`, data);
 
                 // Fetch the corresponding data from the timetable collection using timetableId
                 db.collection('timetable').doc(data.timetableId).get()
@@ -158,6 +161,7 @@ function loadTimetableData(type) {
         timetableCollection.get().then((snapshot) => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
+				console.log("Document ID before appending:", doc.id);
                 appendToTable(data, targetElementId, type);
             });
         });
@@ -173,10 +177,13 @@ function appendToTable(data, targetElementId, type) {
         let lecturerName = "Unknown";  // default name in case no match is found
         lecturerSnapshot.forEach((lecturerDoc) => {
             lecturerName = lecturerDoc.data().name;  // Assuming the field for lecturer's name is 'name'
+			console.log("Appending data to table:", data);
         });
 
         let rowData = "";
-        if (type === 'normal') {
+		
+        if (type === 'timetable') {
+						console.log("Appending the following row to", targetElementId, "\n", `<tr>${rowData}<td><button class="btn btn-success" onclick="approveTimetable('${data.documentId}', '${type}')">Approve</button><button class="btn btn-danger" onclick="rejectTimetable('${data.documentId}', '${type}')">Reject</button></td></tr>`);
             rowData = `
                 <td>${data.course}</td>
                 <td>${lecturerName}</td>
@@ -186,6 +193,7 @@ function appendToTable(data, targetElementId, type) {
                 <td>${data.endTime}</td>
                 <td>${data.venue}</td>
             `;
+
         } else if (type === 'replacement') {
             rowData = `
                 <td>${data.courseName}</td>
@@ -206,6 +214,7 @@ function appendToTable(data, targetElementId, type) {
                 <td>${data.endTime}</td>
                 <td>${data.venue}</td>
             `;
+			console.log("Populating rowData for timetable:", rowData);
         }
 
         // Append the constructed row data to the table
@@ -232,9 +241,9 @@ $(`#${targetElementId}`).append(`
         $(".timetable-list").empty();
 
         // Show selected view and load its data
-        if (type === 'normal') {
+        if (type === 'timetable') {
             $('#normal-view').show();
-            loadTimetableData('normal');
+            loadTimetableData('timetable');
         } else if (type === 'replacement') {
             $('#replacement-view').show();
             loadTimetableData('replacement');
