@@ -124,7 +124,7 @@ const firebaseConfig = {
         }
     });
 	
-	//assign lecturer
+// Assign lecturer
 document.getElementById("assignCourseForm").addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevents the default form submission
 
@@ -139,14 +139,19 @@ document.getElementById("assignCourseForm").addEventListener('submit', async (ev
 
             if (!querySnapshot.empty) {
                 const doc = querySnapshot.docs[0];
+                const docData = doc.data();
                 const docID = doc.id; // this is the actual document ID you want
 
-                // Now update using the document ID
-                await db.collection('course').doc(docID).update({
-                    lecturerTaken: firebase.firestore.FieldValue.arrayUnion(selectedLecturerTutor)
-                });
-
-                alert("Successfully assigned the course to the lecturer/tutor!");
+                // Check if the lecturer/tutor is already assigned to the course
+                if (docData.lecturerTaken && docData.lecturerTaken.includes(selectedLecturerTutor)) {
+                    alert("The selected lecturer/tutor is already assigned to this course!");
+                } else {
+                    // Update the course document with the new lecturer/tutor
+                    await db.collection('course').doc(docID).update({
+                        lecturerTaken: firebase.firestore.FieldValue.arrayUnion(selectedLecturerTutor)
+                    });
+                    alert("Successfully assigned the course to the lecturer/tutor!");
+                }
             } else {
                 console.error("No document found with courseCode:", selectedCourseCode);
                 alert("No matching course found. Please try again.");
@@ -159,6 +164,7 @@ document.getElementById("assignCourseForm").addEventListener('submit', async (ev
         alert("Please select a lecturer/tutor and a course.");
     }
 });
+
 
 
 </script>

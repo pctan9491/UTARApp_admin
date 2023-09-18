@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturer Timetable Status</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Lecturer Timetable Status</h2>
+	
+	<div class="mb-3">
+        <label for="sortSelect" class="form-label">Sort By Status:</label>
+        <select class="form-control" id="sortSelect" onchange="sortTableByStatus()">
+            <option value="all">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+    </div>
+	
+	<div class="mb-3">
+    <label for="typeSelect" class="form-label">Sort By Type:</label>
+    <select class="form-control" id="typeSelect" onchange="sortTableByType()">
+        <option value="all">All</option>
+        <option value="normal">Normal</option>
+        <option value="replacement">Replacement</option>
+        <option value="cancellation">Cancellation</option>
+    </select>
+</div>
+
+
+	
+    <table class="table table-striped" id="lecturer-status-table">
+        <thead>
+            <tr>
+                <th>Lecturer Name</th>
+                <th>Course</th>
+                <th>Day</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Venue</th>
+                <th>Status</th>
+				<th>Type</th>
+            </tr>
+        </thead>
+        <tbody id="lecturer-status-list">
+            <!-- The timetable entries with lecturer status will be populated here from Firebase -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+					<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+	
+function loadLecturerStatusData() {
+    const loggedInLecturerId = localStorage.getItem('saveLoginID');
+    
+    if (!loggedInLecturerId) {
+        console.error("No lecturer ID found in local storage.");
+        return;
+    }
+
+    let lecturerName = "Unknown";
+
+    // Step 2: Fetch the lecturer's name
+    db.collection('lecturer').where('lectutId', '==', loggedInLecturerId).get()
+    .then(lecturerSnapshot => {
+        lecturerSnapshot.forEach(lecturerDoc => {
+            lecturerName = lecturerDoc.data().name;
+        });
+
+        // Step 3: Fetch the timetable docs for the lecturer
+        return db.collection('timetable').where('lecturerTutor', '==', loggedInLecturerId).get();
+
+    }).then(timetableSnapshot => {
+        const timetableIds = timetableSnapshot.docs.map(doc => doc.id);
+
+        // Step 4: Based on the timetable, fetch the replacement and cancellation entries
+        const promises = ['replacement', 'cancellation'].map(type => {
+            return db.collection(type).where('timetableId', 'in', timetableIds).get();
+        });
+        promises.push(Promise.resolve(timetableSnapshot));  // Add the normal timetable to the promises array
+
+        return Promise.all(promises);
+
+    }).then(([replacementSnapshot, cancellationSnapshot, normalTimetableSnapshot]) => {
+        const processSnapshot = (snapshot, type) => {
+            const promises = [];
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+
+                // For replacements: fetch additional data from the timetable collection
+                if (type === 'replacement' || type === 'cancellation') {
+                    promises.push(
+                        db.collection('timetable').doc(data.timetableId).get().then(timetableDoc => {
+                            const timetableData = timetableDoc.data();
+                            return {
+                                ...timetableData,  // Spread timetable data
+                                ...data            // Spread the specific data (either replacement or cancellation)
+                            };
+                        })
+                    );
+                } else {
+                    // For normal timetable
+                    promises.push(Promise.resolve(data));
+                }
+            });
+
+            // Process the combined data and append to the table
+            return Promise.all(promises).then(combinedDataArray => {
+                combinedDataArray.forEach(combinedData => {
+                    let rowClass = "table-warning";
+                    let status = "Pending";
+                    if (combinedData.approved === true) {
+                        status = "Approved";
+                        rowClass = "table-success";
+                    } else if (combinedData.rejection === true) {
+                        status = "Rejected";
+                        rowClass = "table-danger";
+                    }
+
+                    $('#lecturer-status-list').append(`
+                        <tr class="${rowClass}">
+                            <td>${lecturerName}</td>           
+                            <td>${combinedData.course}</td>
+                            <td>${combinedData.day || combinedData.date}</td>
+                            <td>${combinedData.startTime}</td>
+                            <td>${combinedData.endTime}</td>
+                            <td>${combinedData.venue}</td>
+                            <td>${status}</td>
+                            <td>${type}</td>
+                        </tr>
+                    `);
+                });
+            });
+        };
+
+        // Step 5: Process each type
+        return Promise.all([
+            processSnapshot(replacementSnapshot, 'replacement'),
+            processSnapshot(cancellationSnapshot, 'cancellation'),
+            processSnapshot(normalTimetableSnapshot, 'normal')
+        ]);
+
+    }).catch(error => {
+        console.error("Error fetching data: ", error);
+    });
+}
+
+
+
+
+function sortTableByStatus() {
+    filterTable();
+}
+
+function sortTableByType() {
+    filterTable();
+}
+
+function filterTable() {
+    const selectedStatus = document.getElementById("sortSelect").value;
+    const selectedType = document.getElementById("typeSelect").value;
+
+    // Get all rows in the table
+    const table = document.getElementById("lecturer-status-table");
+    const rows = table.getElementsByTagName("tr");
+
+    // Loop through all table rows
+    for (let i = 1; i < rows.length; i++) {
+        const statusCell = rows[i].getElementsByTagName("td")[6];
+        const typeCell = rows[i].getElementsByTagName("td")[7];
+        
+        if (statusCell && typeCell) {
+            const rowStatus = statusCell.innerText;
+            const rowType = typeCell.innerText;
+
+            if ((selectedStatus === "all" || rowStatus === selectedStatus) &&
+                (selectedType === "all" || rowType === selectedType)) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}
+
+
+
+// Load the lecturer status data when the page loads
+loadLecturerStatusData();
+
+	</script>
+</body>
+</html>

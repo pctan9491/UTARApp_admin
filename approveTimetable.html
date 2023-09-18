@@ -6,13 +6,43 @@
     <title>Admin - Approve Timetable</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+    /* Add some spacing around each button */
+    .btn-custom {
+        margin: 0 10px 10px 0; 
+        padding: 10px 20px; 
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effects */
+    }
+
+    /* Hover effect: Slightly enlarges the button and changes the background color */
+    .btn-custom:hover {
+        background-color: #007BFF; 
+        transform: scale(1.05);
+    }
+
+    /* Active effect: Slightly reduces the size of the button when clicked */
+    .btn-custom:active {
+        transform: scale(0.95);
+    }
+</style>
 </head>
 <body>
 
 <div class="container mt-5">
     <h2>Timetable Approval</h2>
-    <table class="table table-striped">
-        <thead>
+	
+	    <div>
+        <button class="btn btn-primary btn-custom" onclick="loadView('normal')">Normal Timetable</button>
+        <button class="btn btn-primary btn-custom" onclick="loadView('replacement')">Replacement Timetable</button>
+        <button class="btn btn-primary btn-custom" onclick="loadView('cancellation')">Cancellation Timetable</button>
+    </div>
+
+<div id="normal-view" class="view" style="display: none;">
+        <h3>Normal Timetable</h3>
+        <table class="table table-striped" id="normal-timetable">
+            <thead>
             <tr>
                 <th>Course</th>
 				<th>Lecturer Tutor</th>
@@ -21,13 +51,56 @@
                 <th>Start Time</th>
                 <th>End Time</th>
                 <th>Venue</th>
-                <th>Approval</th>
+                <th>Action</th>
             </tr>
         </thead>
-        <tbody id="timetable-list">
+        <tbody id="normal-timetable-list">
             <!-- The timetable entries will be populated here from Firebase -->
         </tbody>
-    </table>
+        </table>
+    </div>
+
+    <div id="replacement-view" class="view" style="display: none;">
+        <h3>Replacement Timetable</h3>
+        <table class="table table-striped" id="replacement-timetable">
+            <thead>
+            <tr>
+                <th>Course</th>
+				<th>Lecturer Tutor</th>
+				<th>Class Type</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Venue</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="replacement-timetable-list">
+            <!-- The timetable entries will be populated here from Firebase -->
+        </tbody>
+        </table>
+    </div>
+
+    <div id="cancellation-view" class="view" style="display: none;">
+        <h3>Cancellation Timetable</h3>
+        <table class="table table-striped" id="cancellation-timetable">
+            <thead>
+            <tr>
+                <th>Course</th>
+				<th>Lecturer Tutor</th>
+				<th>Class Type</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Venue</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="cancellation-timetable-list">
+            <!-- The timetable entries will be populated here from Firebase -->
+        </tbody>
+        </table>
+    </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -48,50 +121,157 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-function loadTimetableData() {
-    const timetableCollection = db.collection('timetable');
-    timetableCollection.get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            
-            // Fetch the lecturer's name based on the lecturerTutor ID
-            const lecturerId = data.lecturerTutor;
-            db.collection('lecturer').where('lectutId', '==', lecturerId).get()
-                .then((lecturerSnapshot) => {
-                    let lecturerName = "Unknown";  // default name in case no match is found
-                    lecturerSnapshot.forEach((lecturerDoc) => {
-                        lecturerName = lecturerDoc.data().name;  // Assuming the field for lecturer's name is 'name'
-                    });
+function loadTimetableData(type) {
+    let targetElementId = `${type}-timetable-list`;
+	$(`#${targetElementId}`).empty();
 
-                    // Append the data to the table
-                    $('#timetable-list').append(`
-                        <tr>
-                            <td>${data.course}</td>
-                            <td>${lecturerName}</td>
-                            <td>${data.classType}</td>
-                            <td>${data.day}</td>
-                            <td>${data.startTime}</td>
-                            <td>${data.endTime}</td>
-                            <td>${data.venue}</td>
-                            <td><button class="btn btn-success" onclick="approveTimetable('${doc.id}')">Approve</button></td>
-                        </tr>
-                    `);
-                })
-                .catch((error) => {
-                    console.error("Error fetching lecturer name: ", error);
-                });
+    if (type === 'replacement' || type === 'cancellation') {
+        const collection = db.collection(type).where('approved', '==', false).where('rejection', '==', false)
+        collection.get().then((snapshot) => {
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+
+                // Fetch the corresponding data from the timetable collection using timetableId
+                db.collection('timetable').doc(data.timetableId).get()
+                    .then((timetableDoc) => {
+                        const timetableData = timetableDoc.data();
+
+                        // Combine the data
+                        const combinedData = {
+                            ...timetableData,
+                            ...data,
+                            lecturerTutor: timetableData.lecturerTutor,
+                            classType: timetableData.classType,
+							documentId: doc.id,
+                        };
+
+                        // Append the combined data to the table
+                        appendToTable(combinedData, targetElementId, type);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching from timetable collection: ", error);
+                    });
+            });
         });
+    } else {
+        const timetableCollection = db.collection(type).where('approved', '==', false);
+        timetableCollection.get().then((snapshot) => {
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                appendToTable(data, targetElementId, type);
+            });
+        });
+    }
+}
+
+
+function appendToTable(data, targetElementId, type) {
+    const lecturerId = data.lecturerTutor;
+
+    db.collection('lecturer').where('lectutId', '==', lecturerId).get()
+    .then((lecturerSnapshot) => {
+        let lecturerName = "Unknown";  // default name in case no match is found
+        lecturerSnapshot.forEach((lecturerDoc) => {
+            lecturerName = lecturerDoc.data().name;  // Assuming the field for lecturer's name is 'name'
+        });
+
+        let rowData = "";
+        if (type === 'normal') {
+            rowData = `
+                <td>${data.course}</td>
+                <td>${lecturerName}</td>
+                <td>${data.classType}</td>
+                <td>${data.day}</td>
+                <td>${data.startTime}</td>
+                <td>${data.endTime}</td>
+                <td>${data.venue}</td>
+            `;
+        } else if (type === 'replacement') {
+            rowData = `
+                <td>${data.courseName}</td>
+                <td>${lecturerName}</td>
+                <td>${data.classType}</td>
+                <td>${data.date}</td>
+                <td>${data.startTime}</td>
+                <td>${data.endTime}</td>
+                <td>${data.venue}</td>
+            `;
+        } else if (type === 'cancellation') {
+            rowData = `
+                <td>${data.course}</td>
+                <td>${lecturerName}</td>
+                <td>${data.classType}</td>
+                <td>${data.date}</td>
+                <td>${data.startTime}</td>
+                <td>${data.endTime}</td>
+                <td>${data.venue}</td>
+            `;
+        }
+
+        // Append the constructed row data to the table
+$(`#${targetElementId}`).append(`
+    <tr>
+        ${rowData}
+        <td><button class="btn btn-success" onclick="approveTimetable('${data.documentId}', '${type}')">Approve</button>
+        <button class="btn btn-danger" onclick="rejectTimetable('${data.documentId}', '${type}')">Reject</button></td>
+    </tr>
+`);
+
+    })
+    .catch((error) => {
+        console.error("Error fetching lecturer name: ", error);
     });
 }
 
 
-    function approveTimetable(timetableId) {
-        // Handle the approval logic here. You can update the Firestore document or whatever is needed.
-        console.log("Approving timetable with ID:", timetableId);
+    function loadView(type) {
+        // Hide all views
+        $('.view').hide();
+
+        // Clear tables
+        $(".timetable-list").empty();
+
+        // Show selected view and load its data
+        if (type === 'normal') {
+            $('#normal-view').show();
+            loadTimetableData('normal');
+        } else if (type === 'replacement') {
+            $('#replacement-view').show();
+            loadTimetableData('replacement');
+        } else if (type === 'cancellation') {
+            $('#cancellation-view').show();
+            loadTimetableData('cancellation');
+        }
     }
 
-    // Load the timetable data when the page loads
-    loadTimetableData();
+function approveTimetable(timetableId, type) {
+    db.collection(type).doc(timetableId).update({
+        approved: true,
+		rejection: false
+    })
+    .then(() => {
+        alert("Timetable approved successfully.");
+        loadView(type);
+    })
+    .catch((error) => {
+        console.error("Error updating document: ", error);
+    });
+}
+
+function rejectTimetable(timetableId, type) {
+    db.collection(type).doc(timetableId).update({
+        rejection: true,
+        approved: false
+    })
+    .then(() => {
+        alert("Timetable rejected successfully!");
+        loadView(type);
+    })
+    .catch((error) => {
+        console.error("Error updating document: ", error);
+    });
+}
+
 </script>
 </body>
 </html>
