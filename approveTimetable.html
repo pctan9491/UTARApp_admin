@@ -161,6 +161,7 @@ console.log("Loading timetable data for type:", type);
         timetableCollection.get().then((snapshot) => {
             snapshot.forEach((doc) => {
                 const data = doc.data();
+				data.documentId = doc.id;
 				console.log("Document ID before appending:", doc.id);
                 appendToTable(data, targetElementId, type);
             });
