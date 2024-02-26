@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate QR Code</title>
+ <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+ <style>
+                body, html {
+            
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f7f7; /* Light grey background */
+        }
+        .centered-flex {
+            text-align: center;
+            width: 100%; /* Make sure the content uses full width */
+            max-width: 960px; /* Maximum width of the content area */
+            box-sizing: border-box; /* Include padding in the width calculation */
+            padding: 0 20px; /* Padding on the sides */
+        }
+        #qrCode {
+            margin: 20px 0; /* Center QR code vertically and add spacing */
+            background-color: #ffffff; /* White background for QR code */
+            display: inline-block;
+            max-width: 100%; /* Ensure QR code does not overflow the width */
+            box-sizing: border-box; /* Include padding and borders in the width calculation */
+        }
+        .btn-custom {
+            width: auto; /* Auto width for buttons */
+            margin: 10px 0; /* Spacing between buttons */
+        }
+        .btn-block {
+            display: block; /* Make buttons block level */
+            width: 100%; /* Full width buttons */
+        }
+    </style>
+</head>
+<body>
+<div class="centered-flex">
+        <div class="container text-center">
+        <h2 id="qrTitle">QR Code for Class Attendance</h2>
+    </div>
+    <div id="qrCode"></div>
+	<button type="submit" class="btn btn-primary btn-block">Record</button>
+	<button type="button" class="btn btn-success btn-block" id="activateBtn">Activate</button>
+    <button type="button" class="btn btn-danger btn-block" id="deactivateBtn">Deactivate</button>
+	<button type="button" class="btn btn-warning btn-block" id="toggleTrackingBtn"></button>
+</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>	
+<script>
+const firebaseConfig = {
+              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+  authDomain: "utarapp-9f3db.firebaseapp.com",
+  authDomain: "pctan9491.github.io",
+  projectId: "utarapp-9f3db",
+  storageBucket: "utarapp-9f3db.appspot.com",
+  messagingSenderId: "331019317153",
+  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+        };
+        firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+    document.addEventListener('DOMContentLoaded', function() {
+	let locationData;
+	let isTrackingActivated = false;
+        // Parse the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const date = urlParams.get('date');
+        const subject = urlParams.get('subject');
+        const classType = urlParams.get('classType');
+        const startTime = urlParams.get('startTime');
+        const venue = urlParams.get('venue');
+		
+		    // Construct an object with all the information
+    const qrData = {
+        subject: subject,
+        classType: classType,
+        startTime: startTime,
+        venue: venue,
+        date: date
+    };
+
+	document.getElementById('qrTitle').innerText = `${subject} (${classType} ${startTime} ${venue})\n${date}`;
+    // Convert the object to a JSON string
+    const qrText = JSON.stringify(qrData);
+		const qrCodeData = `utarapp://attendance?subject=${subject}&classType=${classType}&startTime=${startTime}&venue=${venue}&date=${date}`;
+        
+        // Generate the QR code
+        new QRCode(document.getElementById("qrCode"), {
+            text: qrText,
+            width: 500,
+            height: 500,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+		        //functionality for Activate and Deactivate buttons
+document.getElementById('activateBtn').addEventListener('click', function() {
+    getLocation().then(() => {
+	console.log(locationData);
+        // Now locationData is guaranteed to be set
+        const qrClassInfoRef = db.collection('qr_class_info');
+        const query = qrClassInfoRef.where('subject', '==', subject)
+                                    .where('classType', '==', classType)
+                                    .where('startTime', '==', startTime)
+                                    .where('venue', '==', venue)
+                                    .where('date', '==', date);
+        
+        query.get().then(querySnapshot => {
+            if (querySnapshot.empty) {
+                // No such document, create one
+                qrClassInfoRef.add({
+                    subject: subject,
+                    classType: classType,
+                    startTime: startTime,
+                    venue: venue,
+                    date: date,
+                    status: 'activate',
+                    location: locationData
+                }).then(docRef => {
+				console.log('Updating with:', locationData);
+                    console.log('Document written with ID: ', docRef.id);
+                }).catch(error => {
+                    console.error('Error adding document: ', error);
+                });
+            } else {
+                // Document exists, update the status
+                querySnapshot.forEach(doc => {
+                    qrClassInfoRef.doc(doc.id).update({
+                        status: 'activate', 
+                        location: locationData
+                    }).then(() => {
+					console.log('Updating with:', locationData);
+                        console.log('Document successfully updated!');
+                    }).catch(error => {
+                        console.error('Error updating document: ', error);
+                    });
+                });
+            }
+        }).catch(error => {
+            console.log('Error getting documents: ', error);
+        });
+    }).catch(error => {
+        console.error('Error getting location: ', error);
+        alert('Error getting location, cannot activate QR Code');
+    });
+});
+
+        document.getElementById('deactivateBtn').addEventListener('click', function() {
+		const qrClassInfoRef = db.collection('qr_class_info');
+  const query = qrClassInfoRef.where('subject', '==', subject)
+                               .where('classType', '==', classType)
+                               .where('startTime', '==', startTime)
+                               .where('venue', '==', venue)
+                               .where('date', '==', date);
+ query.get().then(querySnapshot => {
+ if (querySnapshot.empty) {
+        // No such document
+        alert("Error: No such class information found to deactivate.");
+        return;
+      }
+	  
+	  // Document exists, check the status
+      const doc = querySnapshot.docs[0];
+      const data = doc.data();
+	   if (data.status === 'deactivate') {
+        // Document already deactivated
+        alert("Disallow: The class is already deactivated.");
+      } else {
+        // Update the status to deactivate
+        qrClassInfoRef.doc(doc.id).update({status: 'deactivate'}).then(() => {
+          alert("The class has been successfully deactivated.");
+        }).catch(error => {
+          console.error('Error updating document: ', error);
+          alert("Error: Could not deactivate the class.");
+        });
+      }
+ }).catch(error => {
+      console.error('Error getting documents: ', error);
+      alert("Error: Could not retrieve class information.");
+    });
+        });
+		
+// Fetch the current tracking status from Firestore
+    fetchCurrentTrackingStatus().then(isTrackingActivated => {
+        // Update button text based on fetched status
+        updateToggleButton(isTrackingActivated);
+    });
+		
+    // Toggle button event listener
+    document.getElementById('toggleTrackingBtn').addEventListener('click', function() {
+        // Toggle the tracking status based on the button's current action
+        isTrackingActivated = !isTrackingActivated; // Assuming isTrackingActivated is globally accessible
+        updateTrackingStatusInFirestore(isTrackingActivated ? 'activate' : 'deactivate');
+        updateToggleButton(isTrackingActivated);
+		
+		        // Show an alert based on the new state
+        if (isTrackingActivated) {
+            alert("Location tracking has been enabled.");
+        } else {
+            alert("Location tracking has been disabled.");
+        }
+    });
+
+function updateToggleButton(isTrackingActivated) {
+    const toggleTrackingBtn = document.getElementById('toggleTrackingBtn');
+    toggleTrackingBtn.textContent = isTrackingActivated ? 'Disable Location Tracking' : 'Enable Location Tracking';
+}
+
+function fetchCurrentTrackingStatus() {
+    return new Promise((resolve, reject) => {
+        const qrClassInfoRef = db.collection('qr_class_info');
+        const query = qrClassInfoRef.where('subject', '==', subject)
+                                    .where('classType', '==', classType)
+                                    .where('startTime', '==', startTime)
+                                    .where('venue', '==', venue)
+                                    .where('date', '==', date);
+
+        query.get().then(querySnapshot => {
+            if (!querySnapshot.empty) {
+                // Assuming only one document will match, adjust if necessary
+                const doc = querySnapshot.docs[0];
+                const data = doc.data();
+                resolve(data.trackingStatus === 'activate'); // Resolve true if activated, false otherwise
+            } else {
+                // If no document is found, consider tracking as not activated
+                resolve(false);
+            }
+        }).catch(error => {
+            console.error('Error getting documents:', error);
+            reject(error);
+        });
+    });
+}
+
+
+function updateTrackingStatusInFirestore(newStatus) {
+    const qrClassInfoRef = db.collection('qr_class_info');
+    const query = qrClassInfoRef.where('subject', '==', subject)
+                                .where('classType', '==', classType)
+                                .where('startTime', '==', startTime)
+                                .where('venue', '==', venue)
+                                .where('date', '==', date);
+
+    query.get().then(querySnapshot => {
+        if (querySnapshot.empty) {
+            console.log('No matching documents. Attempting to add a new one.');
+
+            // Optionally handle the case where no document exists yet.
+            // For example, create a new document with the initial status.
+            qrClassInfoRef.add({
+                trackingStatus: newStatus // Use the new trackingStatus field
+                // location: Not handling location data per your request
+            }).then(docRef => {
+                console.log('New document created with tracking status:', newStatus);
+            }).catch(error => {
+                console.error('Error adding new document:', error);
+            });
+        } else {
+            // Document(s) exists, update the status
+            querySnapshot.forEach(doc => {
+                qrClassInfoRef.doc(doc.id).update({
+                    trackingStatus: newStatus // Update only the trackingStatus field
+                }).then(() => {
+                    console.log('Document successfully updated with new tracking status:', newStatus);
+                }).catch(error => {
+                    console.error('Error updating document:', error);
+                });
+            });
+        }
+    }).catch(error => {
+        console.error('Error getting documents:', error);
+    });
+}
+
+
+		
+		 function getLocation() {
+    return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                locationData = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+                resolve(locationData);
+            }, (error) => {
+                console.error('Error fetching location:', error);
+                reject(error);
+            });
+        } else {
+            reject("Geolocation is not supported by this browser.");
+        }
+    });
+}
+// Initialize button text based on the initial tracking status
+document.getElementById('toggleTrackingBtn').textContent = isTrackingActivated ? 'Disable Location Tracking' : 'Enable Location Tracking';
+    });
+
+
+</script>
+</body>
+</html>
