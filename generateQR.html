@@ -53,7 +53,7 @@
         <h2 id="qrTitle">QR Code for Class Attendance</h2>
     </div>
     <div id="qrCode"></div>
-	<button type="submit" class="btn btn-primary btn-block">Record</button>
+	<button type="submit" class="btn btn-primary btn-block" id="recordBtn">Record</button>
 	<button type="button" class="btn btn-success btn-block" id="activateBtn">Activate</button>
     <button type="button" class="btn btn-danger btn-block" id="deactivateBtn">Deactivate</button>
 	<button type="button" class="btn btn-warning btn-block" id="toggleTrackingBtn"></button>
@@ -106,6 +106,21 @@ const db = firebase.firestore();
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
         });
+		
+		document.getElementById('recordBtn').addEventListener('click', function() {
+    // Construct the URL with query parameters
+    const queryParams = new URLSearchParams({
+        subject: subject,
+        classType: classType,
+        startTime: startTime,
+        venue: venue,
+        date: date
+    }).toString();
+
+    // Navigate to the attendanceRecords.html page with the query parameters
+    window.location.href = `attendanceRecords.html?${queryParams}`;
+});
+
 		        //functionality for Activate and Deactivate buttons
 document.getElementById('activateBtn').addEventListener('click', function() {
     getLocation().then(() => {
@@ -149,6 +164,7 @@ document.getElementById('activateBtn').addEventListener('click', function() {
                     });
                 });
             }
+			document.getElementById('recordBtn').disabled = false; // Enable the Record button
         }).catch(error => {
             console.log('Error getting documents: ', error);
         });
