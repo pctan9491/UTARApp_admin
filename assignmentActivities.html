@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Assignment Management Page</title>
+</head>
+<body class="bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="height: 100vh;">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4" id="mainTitle">Assignment Management</h2>
+
+                        <a href="assignAssignmentTask.html" class="btn btn-primary btn-block mb-3 createCourse-btn">Create Assignment</a>
+						<a href="manageAssignment.html" class="btn btn-primary btn-block mb-3 chooseCourse-btn">Manage Assignment</a>
+                        <a href="#" class="btn btn-primary btn-block">...RELEASING...</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+		authDomain: "pctan9491.github.io",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();  
+</script>
+</body>
+</html>

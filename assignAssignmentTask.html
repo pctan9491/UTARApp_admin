@@ -1,311 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Assignment Creator</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Assignment Creator</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-  <style>
-    .toolbar {
-      margin-bottom: 10px;
-    }
-    .toolbar button {
-      font-weight: bold;
-    }
-    .preview {
-      min-height: 100px;
-      border: 1px solid #ccc;
-      padding: 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container my-5">
-    <h1 class="text-center mb-4">Create Assignment</h1>
-    <form>
-      <div class="form-group">
-        <label for="title">Title:</label>
-        <input type="text" class="form-control" id="title" name="title" required>
-      </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <style>
+      .toolbar {
+        margin-bottom: 10px;
+      }
+      .toolbar button {
+        font-weight: bold;
+      }
+      .preview {
+        min-height: 100px;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container my-5">
+      <h1 class="text-center mb-4">Create Assignment</h1>
+      <form>
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            name="title"
+            required
+          />
+        </div>
 
-      <div class="form-group">
-        <label for="description">Description:</label>
-        <div class="toolbar">
-          <button type="button" class="btn btn-light" onclick="formatText('bold')"><b>B</b></button>
-          <button type="button" class="btn btn-light" onclick="formatText('italic')"><i>I</i></button>
-          <button type="button" class="btn btn-light" onclick="formatText('underline')"><u>U</u></button>
-          <button type="button" class="btn btn-light" onclick="formatText('bullet')">&#9679;</button>
-          <select class="form-control d-inline-block w-auto" onchange="changeFontSize(this.value)">
-            <option value="">Font Size</option>
-            <option value="1">Small</option>
-            <option value="2">Medium</option>
-            <option value="3">Large</option>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <div class="toolbar">
+            <button
+              type="button"
+              class="btn btn-light"
+              onclick="formatText('bold')"
+            >
+              <b>B</b>
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              onclick="formatText('italic')"
+            >
+              <i>I</i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              onclick="formatText('underline')"
+            >
+              <u>U</u>
+            </button>
+            <button
+              type="button"
+              class="btn btn-light"
+              onclick="formatText('bullet')"
+            >
+              &#9679;
+            </button>
+            <select
+              class="form-control d-inline-block w-auto"
+              onchange="changeFontSize(this.value)"
+            >
+              <option value="">Font Size</option>
+              <option value="1">Small</option>
+              <option value="2">Medium</option>
+              <option value="3">Large</option>
+            </select>
+          </div>
+          <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            rows="5"
+            required
+          ></textarea>
+          <div class="preview mt-2"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Image:</label>
+          <input
+            type="file"
+            class="form-control-file"
+            id="image"
+            name="image"
+            accept="image/png, image/jpeg, image/gif"
+            multiple
+          />
+          <!-- Placeholder for image preview -->
+          <div id="imagePreview" style="margin-top: 20px"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="file">File:</label>
+          <input
+            type="file"
+            class="form-control-file"
+            id="file"
+            name="file"
+            accept=".pdf,.doc,.docx,.txt"
+            multiple
+          />
+          <!-- Placeholder for document file name -->
+          <div id="filePreview" style="margin-top: 20px"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="due-date">Due Date:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="due-date"
+            name="due-date"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="classes">Classes:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="classSearch"
+            placeholder="Type to search..."
+          />
+          <select
+            class="form-control"
+            id="classes"
+            name="classes"
+            multiple
+            required
+          >
+            <!-- Options will be dynamically populated -->
           </select>
         </div>
-        <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
-        <div class="preview mt-2"></div>
-      </div>
-	  
-	  <div class="form-group">
-    <label for="image">Image:</label>
-    <input type="file" class="form-control-file" id="image" name="image" accept="image/png, image/jpeg, image/gif">
-    <!-- Placeholder for image preview -->
-    <div id="imagePreview" style="margin-top: 20px;"></div>
-</div>
-	  
-	  <div class="form-group">
-    <label for="file">File:</label>
-    <input type="file" class="form-control-file" id="file" name="file" accept=".pdf,.doc,.docx,.txt">
-    <!-- Placeholder for document file name -->
-    <div id="filePreview" style="margin-top: 20px;"></div>
-</div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">
+            Create Assignment
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+                    apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        authDomain: "pctan9491.github.io",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+              };
+              firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+          function formatText(command) {
+            const textarea = document.getElementById("description");
+            const preview = document.querySelector(".preview");
+            let start = textarea.selectionStart;
+            let end = textarea.selectionEnd;
+            let text = textarea.value;
+            let replacement;
+
+            if (command === "bold") {
+              replacement = `<b>${text.slice(start, end)}</b>`;
+            } else if (command === "italic") {
+              replacement = `<i>${text.slice(start, end)}</i>`;
+            } else if (command === "underline") {
+              replacement = `<u>${text.slice(start, end)}</u>`;
+            } else if (command === "bullet") {
+              replacement = `- ${text.slice(start, end)}`;
+            }
+
+            textarea.value = text.slice(0, start) + replacement + text.slice(end);
+            textarea.selectionStart = start + replacement.length;
+            textarea.selectionEnd = start + replacement.length;
+            updatePreview();
+          }
+
+          function changeFontSize(size) {
+            const preview = document.querySelector(".preview");
+            preview.style.fontSize = size === "1" ? "12px" : size === "2" ? "16px" : "20px";
+          }
+
+          function updatePreview() {
+            const textarea = document.getElementById("description");
+            const preview = document.querySelector(".preview");
+            preview.innerHTML = textarea.value
+              .replace(/\n/g, "<br>")
+              .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+              .replace(/\*(.+?)\*/g, "<i>$1</i>")
+              .replace(/\<u\>(.+?)\<\/u\>/g, "<u>$1</u>");
+          }
+
+          const textarea = document.getElementById("description");
+          textarea.addEventListener("input", updatePreview);
 
 
-      <div class="form-group">
-        <label for="due-date">Due Date:</label>
-        <input type="text" class="form-control" id="due-date" name="due-date" required>
-      </div>
+      	//Save inside firebase
+      	document.querySelector('form').addEventListener('submit', function(e) {
+          e.preventDefault();
 
-      <div class="form-group">
-        <label for="classes">Classes:</label>
-  <input type="text" class="form-control" id="classSearch" placeholder="Type to search...">
-        <select class="form-control" id="classes" name="classes" multiple required>
-          <!-- Options will be dynamically populated -->
-        </select>
-      </div>
+          // Collect form data
+      	const loggedInLecturerId = localStorage.getItem('saveLoginID');
+          const title = document.getElementById('title').value;
+          const description = document.getElementById('description').value;
+          const dueDate = document.getElementById('due-date').value;
+          const classDocIds = [...document.getElementById('classes').selectedOptions].map(option => option.value);
+      	const imageFiles = document.getElementById('image').files;
+      	const documentFiles = document.getElementById('file').files;
 
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary">Create Assignment</button>
-      </div>
-    </form>
-  </div>
+          // First, upload files to Firebase Storage if they exist
+         const imageUploadPromises = Array.from(imageFiles).map(file => {
+          const imageRef = firebase.storage().ref().child(`assignmentImages/${file.name}`);
+          return imageRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+      });
 
-  <script>
-  const firebaseConfig = {
-              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-  authDomain: "utarapp-9f3db.firebaseapp.com",
-  authDomain: "pctan9491.github.io",
-  projectId: "utarapp-9f3db",
-  storageBucket: "utarapp-9f3db.appspot.com",
-  messagingSenderId: "331019317153",
-  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-        firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+      // Upload documents and get their URLs
+      const documentUploadPromises = Array.from(documentFiles).map(file => {
+          const documentRef = firebase.storage().ref().child(`assignmentDocuments/${file.name}`);
+          return documentRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+      });
 
-    function formatText(command) {
-      const textarea = document.getElementById("description");
-      const preview = document.querySelector(".preview");
-      let start = textarea.selectionStart;
-      let end = textarea.selectionEnd;
-      let text = textarea.value;
-      let replacement;
 
-      if (command === "bold") {
-        replacement = `<b>${text.slice(start, end)}</b>`;
-      } else if (command === "italic") {
-        replacement = `<i>${text.slice(start, end)}</i>`;
-      } else if (command === "underline") {
-        replacement = `<u>${text.slice(start, end)}</u>`;
-      } else if (command === "bullet") {
-        replacement = `- ${text.slice(start, end)}`;
-      }
+      Promise.all([...imageUploadPromises, ...documentUploadPromises]).then(urls => {
+          // Assuming the first part of the array contains image URLs and the rest are document URLs
+          const imageUrls = urls.slice(0, imageFiles.length);
+          const documentUrls = urls.slice(imageFiles.length);
 
-      textarea.value = text.slice(0, start) + replacement + text.slice(end);
-      textarea.selectionStart = start + replacement.length;
-      textarea.selectionEnd = start + replacement.length;
-      updatePreview();
-    }
+          // Now that we have all URLs, save everything to Firestore
+          return db.collection("assignments").add({
+              title,
+              description,
+              dueDate,
+              classes: classDocIds,
+              lecId: loggedInLecturerId,
+              imageUrls, // Store as an array
+              documentUrls // Store as an array
+          });
+      }).then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id);
+          alert('Assignment created successfully!');
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      });
+	  })
+	  const loggedInLecturerId = localStorage.getItem('saveLoginID');
+	  const classesSelect = document.getElementById('classes');
 
-    function changeFontSize(size) {
-      const preview = document.querySelector(".preview");
-      preview.style.fontSize = size === "1" ? "12px" : size === "2" ? "16px" : "20px";
-    }
-
-    function updatePreview() {
-      const textarea = document.getElementById("description");
-      const preview = document.querySelector(".preview");
-      preview.innerHTML = textarea.value
-        .replace(/\n/g, "<br>")
-        .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-        .replace(/\*(.+?)\*/g, "<i>$1</i>")
-        .replace(/\<u\>(.+?)\<\/u\>/g, "<u>$1</u>");
-    }
-
-    const textarea = document.getElementById("description");
-    textarea.addEventListener("input", updatePreview);
-	
-	
-	//Save inside firebase
-	document.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    // Collect form data
-	const loggedInLecturerId = localStorage.getItem('saveLoginID');
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
-    const dueDate = document.getElementById('due-date').value;
-    const classes = [...document.getElementById('classes').selectedOptions].map(option => option.value);
-	const imageFile = document.getElementById('image').files[0];
-    const documentFile = document.getElementById('file').files[0];
-
-    // First, upload files to Firebase Storage if they exist
-    let imageUploadPromise;
-    if (imageFile) {
-        const imageRef = firebase.storage().ref().child(`assignmentImage/${imageFile.name}`);
-        imageUploadPromise = imageRef.put(imageFile);
-    } else {
-        imageUploadPromise = Promise.resolve(null);
-    }
-
-    let documentUploadPromise;
-    if (documentFile) {
-        const documentRef = firebase.storage().ref().child(`assignmentDocument/${documentFile.name}`);
-        documentUploadPromise = documentRef.put(documentFile);
-    } else {
-        documentUploadPromise = Promise.resolve(null);
-    }
-
-    Promise.all([imageUploadPromise, documentUploadPromise]).then(([imageSnapshot, documentSnapshot]) => {
-        // Get download URLs for both files if they exist
-        const imageUrlPromise = imageSnapshot ? imageSnapshot.ref.getDownloadURL() : Promise.resolve("");
-        const documentUrlPromise = documentSnapshot ? documentSnapshot.ref.getDownloadURL() : Promise.resolve("");
-
-        return Promise.all([imageUrlPromise, documentUrlPromise]);
-    }).then(([imageUrl, documentUrl]) => {
-        // Now that we have URLs, save everything to Firestore
-        return db.collection("assignments").add({
-            title,
-            description,
-            dueDate,
-            classes,
-            lecId: loggedInLecturerId,
-            imageUrl,
-            documentUrl
-        });
-    }).then(function(docRef) {
-      console.log("Document written with ID: ", docRef.id);
-      // Reset the form or perform other actions as needed
-	  
-	  alert('Assignment created successfully!');
-    })
-    .catch(function(error) {
-      console.error("Error adding document: ", error);
-    });
-  });
-  
-   // Populate classes options based on loggedInLecturerId
-    const loggedInLecturerId = localStorage.getItem('saveLoginID');
-    const classesSelect = document.getElementById('classes');
-
-    db.collection('timetable')
-      .where('lecturerTutor', '==', loggedInLecturerId)
-	  .where('approved', '==', true)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          const timetableData = doc.data();
-          const courseCode = timetableData.course;
-          const day = timetableData.day;
-          const startTime = timetableData.startTime;
-          const endTime = timetableData.endTime;
-          const venue = timetableData.venue;
-          const classType = timetableData.classType;
-
-          db.collection('course')
-            .where('courseCode', '==', courseCode)
+          db.collection('timetable')
+            .where('lecturerTutor', '==', loggedInLecturerId)
+      	  .where('approved', '==', true)
             .get()
             .then(querySnapshot => {
-			 querySnapshot.forEach(courseDoc => {		
-              const courseData = courseDoc.data();
-              const courseTitle = courseData.courseTitle;
+              querySnapshot.forEach(doc => {
+                const timetableData = doc.data();
+                const courseCode = timetableData.course;
+                const day = timetableData.day;
+                const startTime = timetableData.startTime;
+                const endTime = timetableData.endTime;
+                const venue = timetableData.venue;
+                const classType = timetableData.classType;
 
-              const option = document.createElement('option');
-              option.value = `${courseCode},${day},${startTime},${endTime},${venue},${classType}`;
-              option.text = `${courseCode} ${courseTitle} - ${day}, ${startTime} - ${endTime}, ${venue}, ${classType}`;
-              classesSelect.add(option);
-			  });
+                db.collection('course')
+                  .where('courseCode', '==', courseCode)
+                  .get()
+                  .then(querySnapshot => {
+      			 querySnapshot.forEach(courseDoc => {
+                    const courseData = courseDoc.data();
+                    const courseTitle = courseData.courseTitle;
+
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.text = `${courseCode} ${courseTitle} - ${day}, ${startTime} - ${endTime}, ${venue}, ${classType}`;
+                    classesSelect.add(option);
+      			  });
+                  })
+                  .catch(error => {
+                    console.error('Error getting course data:', error);
+                  });
+              });
             })
             .catch(error => {
-              console.error('Error getting course data:', error);
+              console.error('Error getting timetable data:', error);
             });
-        });
-      })
-      .catch(error => {
-        console.error('Error getting timetable data:', error);
+
+
+
+      	  //Search function in class
+      	  document.getElementById('classSearch').addEventListener('input', function() {
+        const searchValue = this.value.toLowerCase();
+        const classesSelect = document.getElementById('classes');
+        const options = classesSelect.options;
+
+        for (let option of options) {
+          const text = option.text.toLowerCase();
+          if (text.indexOf(searchValue) > -1) {
+            option.style.display = ""; // Show options that match
+          } else {
+            option.style.display = "none"; // Hide options that don't match
+          }
+        }
       });
-	  
-	  
-	  
-	  //Search function in class
-	  document.getElementById('classSearch').addEventListener('input', function() {
-  const searchValue = this.value.toLowerCase();
-  const classesSelect = document.getElementById('classes');
-  const options = classesSelect.options;
 
-  for (let option of options) {
-    const text = option.text.toLowerCase();
-    if (text.indexOf(searchValue) > -1) {
-      option.style.display = ""; // Show options that match
-    } else {
-      option.style.display = "none"; // Hide options that don't match
-    }
-  }
-});
-
-//Calendar View
-document.addEventListener('DOMContentLoaded', function() {
-flatpickr("#due-date", {
-    enableTime: true,
-    dateFormat: "Y-m-d H:i",
-    altInput: true,
-    altFormat: "F j, Y at H:i",
-    minDate: "today",
-    "locale": {
-        "firstDayOfWeek": 1 // start week on Monday
-    }
-});
-});
+      //Calendar View
+      document.addEventListener('DOMContentLoaded', function() {
+      flatpickr("#due-date", {
+          enableTime: true,
+          dateFormat: "Y-m-d H:i",
+          altInput: true,
+          altFormat: "F j, Y at H:i",
+          minDate: "today",
+          "locale": {
+              "firstDayOfWeek": 1 // start week on Monday
+          }
+      });
+      });
 
 
-//Image preview
-document.getElementById('image').addEventListener('change', function(event) {
-    const imagePreview = document.getElementById('imagePreview');
-    imagePreview.innerHTML = ''; // Clear the preview
+      //Image preview
+      document.getElementById('image').addEventListener('change', function(event) {
+          const imagePreview = document.getElementById('imagePreview');
+          imagePreview.innerHTML = ''; // Clear the preview
 
-    const [file] = event.target.files;
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.maxWidth = '200px'; // Set a maximum width for the preview
-            img.style.maxHeight = '200px'; // Set a maximum height for the preview
-            imagePreview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    }
-});
+          const [file] = event.target.files;
+          if (file && file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  const img = document.createElement('img');
+                  img.src = e.target.result;
+                  img.style.maxWidth = '200px'; // Set a maximum width for the preview
+                  img.style.maxHeight = '200px'; // Set a maximum height for the preview
+                  imagePreview.appendChild(img);
+              };
+              reader.readAsDataURL(file);
+          }
+      });
 
-//Document preview
-document.getElementById('file').addEventListener('change', function(event) {
-    const filePreview = document.getElementById('filePreview');
-    filePreview.innerHTML = ''; // Clear the preview
+      //Document preview
+      document.getElementById('file').addEventListener('change', function(event) {
+          const filePreview = document.getElementById('filePreview');
+          filePreview.innerHTML = ''; // Clear the preview
 
-    const [file] = event.target.files;
-    if (file) {
-        filePreview.textContent = `Selected file: ${file.name}`;
-    }
-});
-
-  </script>
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-</body>
+          const [file] = event.target.files;
+          if (file) {
+              filePreview.textContent = `Selected file: ${file.name}`;
+          }
+      });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  </body>
 </html>
