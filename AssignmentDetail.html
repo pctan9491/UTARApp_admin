@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assignment Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" id="assignmentTitle">Loading...</h5>
+            <h6 class="card-subtitle mb-2 text-muted" id="assignmentDueDate">Loading...</h6>
+
+<!-- Class details placeholder -->
+<!-- Class details section with a more designed toggle button -->
+<div id="assignmentClasses" class="mt-4">
+    <h4>Class Details</h4>
+    <div id="classDetailsContainer" class="accordion" role="tablist">
+        <!-- Enhanced class details will be dynamically inserted here -->
+    </div>
+    <button id="toggleClassDetails" class="btn btn-info mt-3" style="display: none;">
+        Show More <i class="fas fa-angle-down"></i>
+    </button>
+</div>
+
+            <!-- Additional assignment details can be inserted here -->
+            <p class="card-text" id="assignmentDescription">Please wait, fetching details...</p>
+			<!-- Image placeholders -->
+<div id="assignmentImages" class="row mt-3">
+    <!-- Images will be appended here in a grid layout -->
+</div>
+
+<!-- Document placeholders -->
+<div id="assignmentDocuments" class="mt-3">
+    <!-- Document links will be appended here -->
+</div>
+            <a href="manageAssignment.html" class="card-link">Back to Assignments List</a>
+        </div>
+		<div class="card-footer">
+    <button id="likeButton" class="btn btn-outline-primary">Like</button>
+    <span id="likeCount">0 Likes</span>
+</div>
+    </div>
+</div>
+
+<script>
+// Your web app's Firebase configuration (the same as on your assignments list page)
+var firebaseConfig = {
+    apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+    authDomain: "utarapp-9f3db.firebaseapp.com",
+    projectId: "utarapp-9f3db",
+    storageBucket: "utarapp-9f3db.appspot.com",
+    messagingSenderId: "331019317153",
+    appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+
+function getQueryParams() {
+    var queryParams = {};
+    location.search.substr(1).split("&").forEach(function(item) {
+        let [key, value] = item.split("=");
+        queryParams[key] = decodeURIComponent(value);
+    });
+    return queryParams;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var queryParams = getQueryParams();
+    var assignmentId = queryParams.assignmentId;
+	const loggedInLecturerId = localStorage.getItem('saveLoginID');
+
+    if(assignmentId) {
+	const docRef = db.collection("assignments").doc(assignmentId);
+        docRef.get().then((doc) => {
+            if (doc.exists) {
+                const assignment = doc.data();
+                document.getElementById("assignmentTitle").innerText = assignment.title;
+                document.getElementById("assignmentDueDate").innerText = `Due Date: ${assignment.dueDate}`;
+                document.getElementById("assignmentDescription").innerText = assignment.description || "No additional information provided.";
+				
+				// Handle imageUrls
+                const imagesContainer = document.getElementById("assignmentImages");
+if(assignment.imageUrls && assignment.imageUrls.length > 0) {
+    assignment.imageUrls.forEach((url) => {
+        // Create a column div for each image
+        const colDiv = document.createElement("div");
+        colDiv.classList.add("col-md-4", "col-sm-6", "mb-3"); // Adjust the column sizing as needed
+
+        // Create the image element
+        const imgElement = document.createElement("img");
+        imgElement.src = url;
+        imgElement.classList.add("img-fluid"); // Make the image responsive
+        imgElement.style.borderRadius = "5px"; // Optional: round corners
+
+        // Append the image to the column div, and the column div to the images container
+        colDiv.appendChild(imgElement);
+        document.getElementById("assignmentImages").appendChild(colDiv);
+    });
+}
+
+                // Handle documentUrls
+                const documentsContainer = document.getElementById("assignmentDocuments");
+                if(assignment.documentUrls && assignment.documentUrls.length > 0) {
+                    assignment.documentUrls.forEach((url, index) => {
+                        const linkElement = document.createElement("a");
+                        linkElement.href = url;
+                        linkElement.innerText = `Document ${index + 1}`;
+                        linkElement.classList.add("d-block", "mb-2"); // Bootstrap classes for block display and margin
+                        linkElement.target = "_blank"; // Open in a new tab
+                        documentsContainer.appendChild(linkElement);
+                    });
+                }
+				
+				// Inside the document ready function, after fetching the assignment details
+
+ if(assignment.classes && assignment.classes.length > 0) {
+            const classDetailsContainer = document.getElementById("classDetailsContainer");
+            let toggleState = false; // Track whether we are showing more or less
+
+            assignment.classes.forEach((classId, index) => {
+                db.collection("timetable").doc(classId).get().then((classDoc) => {
+                    if (classDoc.exists) {
+                        const classData = classDoc.data();
+                        const cardHTML = `
+                            <div class="card class-detail mb-3 ${index > 0 ? 'additional-class' : ''}" style="${index > 0 ? 'display: none;' : ''}">
+                                <div class="card-header">Course: ${classData.course}</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">${classData.day}</h5>
+                                    <p class="card-text">Time: ${classData.startTime} - ${classData.endTime}</p>
+                                    <p class="card-text">Venue: ${classData.venue}</p>
+                                    <p class="card-text">Type: ${classData.classType}</p>
+                                </div>
+                            </div>
+                        `;
+                        classDetailsContainer.insertAdjacentHTML('beforeend', cardHTML);
+                    }
+                });
+            });
+
+            const toggleButton = document.getElementById("toggleClassDetails");
+            if(assignment.classes.length > 1) {
+                toggleButton.style.display = "block"; // Only show if there are additional classes
+                toggleButton.onclick = () => {
+                    document.querySelectorAll('.additional-class').forEach(el => {
+                        el.style.display = toggleState ? 'none' : 'block';
+                    });
+                    toggleState = !toggleState; // Toggle the state
+                    toggleButton.innerHTML = toggleState ? 'Show Less <i class="fas fa-angle-up"></i>' : 'Show More <i class="fas fa-angle-down"></i>';
+                };
+            }
+        } else {
+            document.getElementById("assignmentClasses").innerHTML = "<p>No associated classes.</p>";
+        }
+		
+		//Like function
+		const likeButton = document.getElementById("likeButton");
+        const likeCount = document.getElementById("likeCount");
+        let likes = assignment.likes || [];
+        likeCount.textContent = `${likes.length} Likes`;
+		
+		 // Check if the current user has liked the assignment
+                if (likes.includes(loggedInLecturerId)) {
+                    likeButton.classList.add("btn-primary");
+                    likeButton.classList.remove("btn-outline-primary");
+                    likeButton.textContent = "Liked";
+                }
+				likeButton.addEventListener("click", function() {
+                    // Toggle like
+                     const isLiked = likes.includes(loggedInLecturerId);
+    if (isLiked) {
+        // Remove like
+        const newLikes = likes.filter(id => id !== loggedInLecturerId);
+        docRef.update({likes: newLikes}).then(() => {
+            // Successfully updated, now update local likes array and UI
+            likes = newLikes; // Update local array to reflect change
+            likeButton.classList.remove("btn-primary");
+            likeButton.classList.add("btn-outline-primary");
+            likeButton.textContent = "Like";
+            likeCount.textContent = `${likes.length} Likes`;
+        });
+    } else {
+        // Add like
+        const newLikes = [...likes, loggedInLecturerId];
+        docRef.update({likes: newLikes}).then(() => {
+            // Successfully updated, now update local likes array and UI
+            likes = newLikes; // Update local array to reflect change
+            likeButton.classList.add("btn-primary");
+            likeButton.classList.remove("btn-outline-primary");
+            likeButton.textContent = "Liked";
+            likeCount.textContent = `${likes.length} Likes`;
+        });
+    }
+                });
+
+
+            } else {
+                console.log("No such document!");
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
+    }
+});
+</script>
+</body>
+</html>
