@@ -40,8 +40,18 @@
                 <div class="card-footer">
                     <button id="likeButton" class="btn btn-outline-primary">Like</button>
                     <span id="likeCount">0 Likes</span>
-					
-					<!-- Comments Section -->
+
+<!-- Comments Section -->
+    <div class="mt-4">
+        <h4>Add Comment</h4>
+        <div class="input-group mb-3">
+            <input type="text" id="commentInput" class="form-control" placeholder="Write a comment...">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="submitComment">Post</button>
+            </div>
+        </div>
+    </div>					
+
     <div id="assignmentComments" class="mt-4">
         <h4>Comments</h4>
         <div id="commentsContainer">
@@ -136,6 +146,31 @@ function updateUI(assignment) {
         document.getElementById("likeButton").addEventListener("click", function() {
             toggleLike();
         });
+		
+		 // Handle comment submission
+        document.getElementById("submitComment").addEventListener("click", function() {
+            const commentText = document.getElementById("commentInput").value.trim();
+            if (!commentText) {
+                alert("Please write a comment before posting.");
+                return;
+            }
+
+            // Assuming you have a way to get the current user's ID; using loggedInLecturerId as placeholder
+            const newComment = {
+                userId: loggedInLecturerId, // This should ideally be the user's name or identifier
+                commentText: commentText,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Sets the timestamp on the server
+				pin: false
+            };
+			 db.collection("assignments").doc(assignmentId).collection("comments").add(newComment)
+                .then(() => {
+                    document.getElementById("commentInput").value = ''; // Clear input field
+                    fetchCommentsAndUpdateUI(assignmentId); // Refresh comments to include the new one
+                })
+                .catch(error => {
+                    console.error("Error adding comment:", error);
+                });
+		});
     }
 
     function fetchAssignmentAndUpdateUI() {
@@ -169,31 +204,84 @@ function updateUI(assignment) {
         });
     }
 	
-	function fetchCommentsAndUpdateUI(assignmentId) {
+function fetchCommentsAndUpdateUI(assignmentId) {
     const commentsContainer = document.getElementById("commentsContainer");
     commentsContainer.innerHTML = ''; // Clear existing comments
 
     db.collection("assignments").doc(assignmentId).collection("comments")
-        .orderBy("timestamp", "desc") // Assuming you want the newest comments first
+        .orderBy("pin", "desc")
+        .orderBy("timestamp", "desc") 
         .get()
         .then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 const comment = doc.data();
                 const commentElement = document.createElement("div");
                 commentElement.classList.add("comment");
-
-                // Format timestamp
                 const commentDate = comment.timestamp ? comment.timestamp.toDate().toLocaleString() : "Unknown date";
+                const pinText = comment.pin ? "<strong>[Pinned]</strong> " : "";
 
-                // Assuming userId can be mapped to a username, if needed. For simplicity, just using userId here.
-                commentElement.innerHTML = `<p><strong>${comment.userId}</strong> on ${commentDate}</p><p>${comment.commentText}</p>`;
+                commentElement.innerHTML = `
+                    <p>${pinText}<strong>${comment.userId}</strong> on ${commentDate}</p>
+                    <p>${comment.commentText}</p>
+                    <button class="btn btn-sm btn-secondary pinCommentBtn" data-id="${doc.id}">Pin/Unpin</button>
+                `;
                 commentsContainer.appendChild(commentElement);
             });
         })
         .catch(error => {
             console.error("Error fetching comments:", error);
         });
+
+    // Event delegation for Pin buttons
+    commentsContainer.addEventListener('click', event => {
+        if (event.target.classList.contains('pinCommentBtn')) {
+            const commentId = event.target.getAttribute('data-id');
+            togglePinComment(assignmentId, commentId);
+        }
+    });
 }
+
+// Toggle pin status of a comment
+// Toggle pin status of a comment
+function togglePinComment(assignmentId, commentId) {
+    const commentsRef = db.collection("assignments").doc(assignmentId).collection("comments");
+    
+    // Step 1: Get the current status of the comment to be toggled
+    commentsRef.doc(commentId).get().then(doc => {
+        if (!doc.exists) {
+            console.log("No such comment!");
+            return;
+        }
+        const currentPinStatus = doc.data().pin || false;
+
+        // Step 2: Unpin all comments
+        commentsRef.get().then(snapshot => {
+            let batch = db.batch();
+            
+            snapshot.forEach(doc => {
+                batch.update(commentsRef.doc(doc.id), { pin: false });
+            });
+
+            // Step 3: Commit the batch update
+            batch.commit().then(() => {
+                // Step 4: If the comment was not already pinned, pin it after unpinning others
+                if (!currentPinStatus) {
+                    commentsRef.doc(commentId).update({ pin: true })
+                        .then(() => {
+                            console.log("Comment pinned successfully");
+                            fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section
+                        })
+                        .catch(error => console.error("Error pinning the comment:", error));
+                } else {
+                    console.log("Comment unpinned successfully");
+                    fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section if we're just unpinning
+                }
+            }).catch(error => console.error("Error unpinning comments:", error));
+        });
+    });
+}
+
+
 });
 
 </script>
