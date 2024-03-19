@@ -52,7 +52,7 @@ if(loggedInLecturerId) {
         querySnapshot.forEach((doc) => {
             const assignment = doc.data();
             const listItem = document.createElement("a");
-            listItem.href = `assignmentDetail.html?assignmentId=${doc.id}`;
+            listItem.href = `AssignmentDetail.html?assignmentId=${doc.id}`;
             listItem.classList.add("list-group-item", "list-group-item-action");
             listItem.innerHTML = `<h5 class="mb-1">${assignment.title}</h5><p class="mb-1">Due Date: ${assignment.dueDate}</p>`;
             assignmentsList.appendChild(listItem);
