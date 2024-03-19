@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment Details</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
@@ -108,13 +107,53 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 }
 
-                // ... (Existing code for class details and like function)
+                 const likeButton = document.getElementById("likeButton");
+        const likeCount = document.getElementById("likeCount");
+        let likes = doc.data().likes || [];
+        likeCount.textContent = `${likes.length} Likes`;
+
+        updateLikeButtonState(likes, loggedInLecturerId, likeButton);
+
+        likeButton.addEventListener("click", () => {
+            handleLikeClick(likes, loggedInLecturerId, docRef, likeButton, likeCount);
+        });
             } else {
                 console.log("No such document!");
             }
         }).catch((error) => {
             console.log("Error getting document:", error);
         });
+		
+		
+		function updateLikeButtonState(likes, userId, button) {
+    if (likes.includes(userId)) {
+        button.classList.add("btn-primary");
+        button.classList.remove("btn-outline-primary");
+        button.textContent = "Liked";
+    } else {
+        button.classList.remove("btn-primary");
+        button.classList.add("btn-outline-primary");
+        button.textContent = "Like";
+    }
+}
+
+function handleLikeClick(likes, userId, docRef, button, countElement) {
+    const isLiked = likes.includes(userId);
+    if (isLiked) {
+        likes = likes.filter(id => id !== userId); // Remove like
+    } else {
+        likes.push(userId); // Add like
+    }
+
+    // Update Firestore
+    docRef.update({likes: likes}).then(() => {
+        // Update likes count and button state
+        countElement.textContent = `${likes.length} Likes`;
+        updateLikeButtonState(likes, userId, button);
+    }).catch((error) => {
+        console.error("Error updating likes:", error);
+    });
+}
     }
 });
 </script>
