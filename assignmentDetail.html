@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Assignment Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script> <!-- For icons -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
@@ -14,36 +15,22 @@
         <div class="card-body">
             <h5 class="card-title" id="assignmentTitle">Loading...</h5>
             <h6 class="card-subtitle mb-2 text-muted" id="assignmentDueDate">Loading...</h6>
-
-<!-- Class details placeholder -->
-<!-- Class details section with a more designed toggle button -->
-<div id="assignmentClasses" class="mt-4">
-    <h4>Class Details</h4>
-    <div id="classDetailsContainer" class="accordion" role="tablist">
-        <!-- Enhanced class details will be dynamically inserted here -->
-    </div>
-    <button id="toggleClassDetails" class="btn btn-info mt-3" style="display: none;">
-        Show More <i class="fas fa-angle-down"></i>
-    </button>
-</div>
-
-            <!-- Additional assignment details can be inserted here -->
+            <div id="assignmentClasses" class="mt-4">
+                <h4>Class Details</h4>
+                <div id="classDetailsContainer" class="accordion" role="tablist"></div>
+                <button id="toggleClassDetails" class="btn btn-info mt-3" style="display: none;">
+                    Show More <i class="fas fa-angle-down"></i>
+                </button>
+            </div>
             <p class="card-text" id="assignmentDescription">Please wait, fetching details...</p>
-			<!-- Image placeholders -->
-<div id="assignmentImages" class="row mt-3">
-    <!-- Images will be appended here in a grid layout -->
-</div>
-
-<!-- Document placeholders -->
-<div id="assignmentDocuments" class="mt-3">
-    <!-- Document links will be appended here -->
-</div>
+            <div id="assignmentImages" class="row mt-3"></div>
+            <div id="assignmentDocuments" class="mt-3"></div>
             <a href="manageAssignment.html" class="card-link">Back to Assignments List</a>
         </div>
-		<div class="card-footer">
-    <button id="likeButton" class="btn btn-outline-primary">Like</button>
-    <span id="likeCount">0 Likes</span>
-</div>
+        <div class="card-footer">
+            <button id="likeButton" class="btn btn-outline-primary">Like</button>
+            <span id="likeCount">0 Likes</span>
+        </div>
     </div>
 </div>
 
