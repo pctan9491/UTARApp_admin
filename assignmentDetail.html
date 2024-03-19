@@ -62,100 +62,97 @@ function getQueryParams() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    var queryParams = getQueryParams();
-    var assignmentId = queryParams.assignmentId;
+    const queryParams = getQueryParams();
+    const assignmentId = queryParams.assignmentId;
     const loggedInLecturerId = localStorage.getItem('saveLoginID');
+    const docRef = db.collection("assignments").doc(assignmentId);
 
-    if(assignmentId) {
-        const docRef = db.collection("assignments").doc(assignmentId);
+    // This function updates the UI based on the fetched assignment data
+function updateUI(assignment) {
+    document.getElementById("assignmentTitle").innerText = assignment.title;
+    document.getElementById("assignmentDueDate").innerText = `Due Date: ${assignment.dueDate}`;
+    document.getElementById("assignmentDescription").innerText = assignment.description || "No additional information provided.";
+    
+    // Clear existing images before adding new ones
+    const imagesContainer = document.getElementById("assignmentImages");
+    imagesContainer.innerHTML = ''; // Clear existing content
+    if (assignment.imageUrls && assignment.imageUrls.length > 0) {
+        assignment.imageUrls.forEach((url) => {
+            const colDiv = document.createElement("div");
+            colDiv.classList.add("col-md-4", "col-sm-6", "mb-3");
+            const imgElement = document.createElement("img");
+            imgElement.src = url;
+            imgElement.classList.add("img-fluid", "rounded");
+            colDiv.appendChild(imgElement);
+            imagesContainer.appendChild(colDiv);
+        });
+    }
+
+    // Clear existing documents before adding new ones
+    const documentsContainer = document.getElementById("assignmentDocuments");
+    documentsContainer.innerHTML = ''; // Clear existing content
+    if (assignment.documentUrls && assignment.documentUrls.length > 0) {
+        assignment.documentUrls.forEach((url, index) => {
+            const linkElement = document.createElement("a");
+            linkElement.href = url;
+            linkElement.innerText = `Document ${index + 1}`;
+            linkElement.classList.add("d-block", "mb-2");
+            linkElement.target = "_blank";
+            documentsContainer.appendChild(linkElement);
+        });
+    }
+
+    // Update likes UI
+    const likeButton = document.getElementById("likeButton");
+    const likeCount = document.getElementById("likeCount");
+    likeCount.textContent = `${assignment.likes.length} Likes`;
+    likeButton.classList.toggle("btn-primary", assignment.likes.includes(loggedInLecturerId));
+    likeButton.classList.toggle("btn-outline-primary", !assignment.likes.includes(loggedInLecturerId));
+    likeButton.textContent = assignment.likes.includes(loggedInLecturerId) ? "Liked" : "Like";
+}
+
+
+    if (assignmentId) {
+        // Fetch and update UI initially
+        fetchAssignmentAndUpdateUI();
+
+        // Attach the event listener for the like button only once
+        document.getElementById("likeButton").addEventListener("click", function() {
+            toggleLike();
+        });
+    }
+
+    function fetchAssignmentAndUpdateUI() {
         docRef.get().then((doc) => {
-            if (doc.exists) {
-                const assignment = doc.data();
-                document.getElementById("assignmentTitle").innerText = assignment.title;
-                document.getElementById("assignmentDueDate").innerText = `Due Date: ${assignment.dueDate}`;
-                document.getElementById("assignmentDescription").innerText = assignment.description || "No additional information provided.";
-
-                // Handle imageUrls
-                const imagesContainer = document.getElementById("assignmentImages");
-                if(assignment.imageUrls && assignment.imageUrls.length > 0) {
-                    assignment.imageUrls.forEach((url) => {
-                        // Create a column div for each image
-                        const colDiv = document.createElement("div");
-                        colDiv.classList.add("col-md-4", "col-sm-6", "mb-3");
-
-                        // Create the image element
-                        const imgElement = document.createElement("img");
-                        imgElement.src = url;
-                        imgElement.classList.add("img-fluid", "rounded");
-
-                        // Append the image to the column div, and the column div to the images container
-                        colDiv.appendChild(imgElement);
-                        imagesContainer.appendChild(colDiv);
-                    });
-                }
-
-                // Handle documentUrls
-                const documentsContainer = document.getElementById("assignmentDocuments");
-                if(assignment.documentUrls && assignment.documentUrls.length > 0) {
-                    assignment.documentUrls.forEach((url, index) => {
-                        const linkElement = document.createElement("a");
-                        linkElement.href = url;
-                        linkElement.innerText = `Document ${index + 1}`;
-                        linkElement.classList.add("d-block", "mb-2");
-                        linkElement.target = "_blank";
-                        documentsContainer.appendChild(linkElement);
-                    });
-                }
-
-                 const likeButton = document.getElementById("likeButton");
-        const likeCount = document.getElementById("likeCount");
-        let likes = doc.data().likes || [];
-        likeCount.textContent = `${likes.length} Likes`;
-
-        updateLikeButtonState(likes, loggedInLecturerId, likeButton);
-
-        likeButton.addEventListener("click", () => {
-            handleLikeClick(likes, loggedInLecturerId, docRef, likeButton, likeCount);
-        });
-            } else {
+            if (!doc.exists) {
                 console.log("No such document!");
+                return;
             }
-        }).catch((error) => {
-            console.log("Error getting document:", error);
+            updateUI(doc.data());
+        }).catch(error => console.error("Error getting document:", error));
+    }
+
+    function toggleLike() {
+        docRef.get().then((doc) => {
+            if (!doc.exists) {
+                console.log("No such document!");
+                return;
+            }
+            const assignment = doc.data();
+            const likes = assignment.likes || [];
+            const isLiked = likes.includes(loggedInLecturerId);
+
+            // Toggle like status
+            const updatedLikes = isLiked ? likes.filter(id => id !== loggedInLecturerId) : [...likes, loggedInLecturerId];
+
+            // Update Firestore
+            docRef.update({ likes: updatedLikes }).then(() => {
+                fetchAssignmentAndUpdateUI(); // Refresh UI after updating Firestore
+            }).catch(error => console.error("Error updating likes:", error));
         });
-		
-		
-		function updateLikeButtonState(likes, userId, button) {
-    if (likes.includes(userId)) {
-        button.classList.add("btn-primary");
-        button.classList.remove("btn-outline-primary");
-        button.textContent = "Liked";
-    } else {
-        button.classList.remove("btn-primary");
-        button.classList.add("btn-outline-primary");
-        button.textContent = "Like";
-    }
-}
-
-function handleLikeClick(likes, userId, docRef, button, countElement) {
-    const isLiked = likes.includes(userId);
-    if (isLiked) {
-        likes = likes.filter(id => id !== userId); // Remove like
-    } else {
-        likes.push(userId); // Add like
-    }
-
-    // Update Firestore
-    docRef.update({likes: likes}).then(() => {
-        // Update likes count and button state
-        countElement.textContent = `${likes.length} Likes`;
-        updateLikeButtonState(likes, userId, button);
-    }).catch((error) => {
-        console.error("Error updating likes:", error);
-    });
-}
     }
 });
+
 </script>
 </body>
 </html>
