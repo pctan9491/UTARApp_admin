@@ -172,6 +172,7 @@
               };
               firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
+	  let assignmentId;
 
           function formatText(command) {
             const textarea = document.getElementById("description");
@@ -217,54 +218,85 @@
 
 
       	//Save inside firebase
-      	document.querySelector('form').addEventListener('submit', function(e) {
-          e.preventDefault();
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-          // Collect form data
-      	const loggedInLecturerId = localStorage.getItem('saveLoginID');
-          const title = document.getElementById('title').value;
-          const description = document.getElementById('description').value;
-          const dueDate = document.getElementById('due-date').value;
-          const classDocIds = [...document.getElementById('classes').selectedOptions].map(option => option.value);
-      	const imageFiles = document.getElementById('image').files;
-      	const documentFiles = document.getElementById('file').files;
+    // Collect form data
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const dueDate = document.getElementById('due-date').value;
+    const classDocIds = [...document.getElementById('classes').selectedOptions].map(option => option.value); // Assuming classes select element exists
+    const imageFiles = document.getElementById('image').files;
+    const documentFiles = document.getElementById('file').files;
 
-          // First, upload files to Firebase Storage if they exist
-         const imageUploadPromises = Array.from(imageFiles).map(file => {
-          const imageRef = firebase.storage().ref().child(`assignmentImages/${file.name}`);
-          return imageRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
-      });
+    // Handle file and image uploads as you have in your existing code
+    // First, upload files to Firebase Storage if they exist
+    const imageUploadPromises = Array.from(imageFiles).map(file => {
+        const imageRef = firebase.storage().ref().child(`assignmentImages/${Date.now()}_${file.name}`);
+        return imageRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+    });
 
-      // Upload documents and get their URLs
-      const documentUploadPromises = Array.from(documentFiles).map(file => {
-          const documentRef = firebase.storage().ref().child(`assignmentDocuments/${file.name}`);
-          return documentRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
-      });
+    const documentUploadPromises = Array.from(documentFiles).map(file => {
+        const documentRef = firebase.storage().ref().child(`assignmentDocuments/${Date.now()}_${file.name}`);
+        return documentRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+    });
 
+    Promise.all([...imageUploadPromises, ...documentUploadPromises]).then(urls => {
+        // Assuming the first part of the array contains image URLs and the rest are document URLs
+        const imageUrls = urls.slice(0, imageFiles.length);
+        const documentUrls = urls.slice(imageFiles.length);
 
-      Promise.all([...imageUploadPromises, ...documentUploadPromises]).then(urls => {
-          // Assuming the first part of the array contains image URLs and the rest are document URLs
-          const imageUrls = urls.slice(0, imageFiles.length);
-          const documentUrls = urls.slice(imageFiles.length);
+        // Check if we're updating an existing assignment or creating a new one
+        if (assignmentId) {
+            // Update the assignment
+            db.collection('assignments').doc(assignmentId).get().then(doc => {
+                if (!doc.exists) {
+                    console.log("No such document!");
+                    return;
+                }
+                let data = doc.data();
+                let newImageUrls = data.imageUrls ? data.imageUrls.concat(imageUrls) : imageUrls;
+                let newDocumentUrls = data.documentUrls ? data.documentUrls.concat(documentUrls) : documentUrls;
 
-          // Now that we have all URLs, save everything to Firestore
-          return db.collection("assignments").add({
-              title,
-              description,
-              dueDate,
-              classes: classDocIds,
-              lecId: loggedInLecturerId,
-              imageUrls, // Store as an array
-              documentUrls // Store as an array
-          });
-      }).then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id);
-          alert('Assignment created successfully!');
-      })
-      .catch(function(error) {
-          console.error("Error adding document: ", error);
-      });
-	  })
+                db.collection('assignments').doc(assignmentId).update({
+                    title: title,
+                    description: description,
+                    dueDate: dueDate,
+                    imageUrls: newImageUrls,
+                    documentUrls: newDocumentUrls,
+                }).then(() => {
+                    console.log('Assignment updated successfully');
+					alert('Assignment updated successfully!');
+					window.location.href = `assignmentDetail.html?assignmentId=${assignmentId}`;
+                    // Handle post-update actions, such as redirecting to a confirmation page
+                }).catch(error => {
+                    console.error('Error updating document: ', error);
+                });
+            });
+        } else {
+            // Add a new assignment
+            db.collection("assignments").add({
+                title,
+                description,
+                dueDate,
+                classes: classDocIds,
+                lecId: loggedInLecturerId,
+                imageUrls, // Store as an array
+                documentUrls // Store as an array
+            }).then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+                alert('Assignment created successfully!');
+				window.location.href = `assignAssignmentTask.html`;
+                // Redirect or update UI as needed
+            }).catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
+        }
+    }).catch(error => {
+        console.error('Error handling file uploads: ', error);
+    });
+});
+
 	  const loggedInLecturerId = localStorage.getItem('saveLoginID');
 	  const classesSelect = document.getElementById('classes');
 
@@ -335,6 +367,17 @@
               "firstDayOfWeek": 1 // start week on Monday
           }
       });
+	  
+	  
+	  const queryParams = new URLSearchParams(window.location.search);
+     assignmentId = queryParams.get('assignmentId'); 
+	
+if (assignmentId) {
+        // Edit mode: Fetch and populate form data
+        document.querySelector('h1.text-center').textContent = 'Edit Assignment';
+        fetchAndPopulateAssignmentData(assignmentId);
+        document.querySelector("button[type='submit']").textContent = 'Update Assignment';
+    }
       });
 
 
@@ -367,6 +410,47 @@
               filePreview.textContent = `Selected file: ${file.name}`;
           }
       });
+	  
+	  function fetchAndPopulateAssignmentData(assignmentId) {
+    db.collection("assignments").doc(assignmentId).get().then(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('title').value = data.title;
+            document.getElementById('description').value = data.description;
+            document.getElementById('due-date')._flatpickr.setDate(new Date(data.dueDate));
+            
+            // For images
+            const imagePreview = document.getElementById('imagePreview');
+            if (data.imageUrls && data.imageUrls.length > 0) {
+                data.imageUrls.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.style.maxWidth = '200px';
+                    img.style.maxHeight = '200px';
+                    imagePreview.appendChild(img);
+                });
+            }
+
+            // For documents
+            const filePreview = document.getElementById('filePreview');
+            if (data.documentUrls && data.documentUrls.length > 0) {
+                data.documentUrls.forEach(url => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.textContent = url.split('/').pop(); // Display filename
+                    a.target = '_blank';
+                    filePreview.appendChild(a);
+                    filePreview.appendChild(document.createElement('br'));
+                });
+            }
+        } else {
+            console.log("No such document!");
+        }
+    }).catch(error => {
+        console.error("Error getting document:", error);
+    });
+}
+
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>

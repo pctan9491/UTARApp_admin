@@ -13,6 +13,19 @@
         padding-bottom: 10px;
         margin-bottom: 10px;
     }
+	
+	 .class-detail {
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,.1);
+    }
+    .class-detail-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        padding: 10px 15px;
+    }
+    .class-detail-body {
+        padding: 15px;
+    }
 </style>
 
 </head>
@@ -22,6 +35,14 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
+			                <!-- Card Header -->
+<div class="card-header">
+    <h1 class="card-title mb-0">Assignment Details</h1>
+	<a href="manageAssignment.html" class="card-link">Back to Assignments List</a>
+    <button id="editAssignment" class="btn btn-primary float-right ml-2">Edit Assignment</button>
+    <button id="deleteAssignment" class="btn btn-danger float-right">Delete Assignment</button>
+</div>
+
                 <div class="card-body">
                     <h5 class="card-title mb-0" id="assignmentTitle">Loading...</h5>
                     <h6 class="card-subtitle mb-3 text-muted" id="assignmentDueDate">Loading...</h6>
@@ -35,7 +56,6 @@
                     <p class="card-text mb-4" id="assignmentDescription">Please wait, fetching details...</p>
                     <div id="assignmentImages" class="row"></div>
                     <div id="assignmentDocuments" class="mt-3"></div>
-                    <a href="manageAssignment.html" class="card-link">Back to Assignments List</a>
                 </div>
                 <div class="card-footer">
                     <button id="likeButton" class="btn btn-outline-primary">Like</button>
@@ -95,6 +115,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // This function updates the UI based on the fetched assignment data
 function updateUI(assignment) {
+    if (!Array.isArray(assignment.imageUrls) || !Array.isArray(assignment.documentUrls)) {
+        console.error("Unexpected data format for imageUrls or documentUrls", assignment);
+        // Optionally, you can return from the function here to avoid executing further code
+        return;
+    }
     document.getElementById("assignmentTitle").innerText = assignment.title;
     document.getElementById("assignmentDueDate").innerText = `Due Date: ${assignment.dueDate}`;
     document.getElementById("assignmentDescription").innerText = assignment.description || "No additional information provided.";
@@ -171,6 +196,12 @@ function updateUI(assignment) {
                     console.error("Error adding comment:", error);
                 });
 		});
+		document.getElementById("deleteAssignment").addEventListener("click", function() {
+        deleteAssignmentAndComments(assignmentId);
+    });
+			document.getElementById("editAssignment").addEventListener("click", function() {
+			window.location.href = "assignAssignmentTask.html?assignmentId=" + assignmentId;
+    });
     }
 
     function fetchAssignmentAndUpdateUI() {
@@ -179,8 +210,13 @@ function updateUI(assignment) {
                 console.log("No such document!");
                 return;
             }
+			console.log("Fetched assignment data:", doc.data());
             updateUI(doc.data());
 			fetchCommentsAndUpdateUI(assignmentId);
+			
+			// Now fetch class details if there are any class IDs
+			const classIds = doc.data().classes || [];
+        fetchAndDisplayClassDetails(classIds);
         }).catch(error => console.error("Error getting document:", error));
     }
 
@@ -209,30 +245,33 @@ function fetchCommentsAndUpdateUI(assignmentId) {
     commentsContainer.innerHTML = ''; // Clear existing comments
 
     db.collection("assignments").doc(assignmentId).collection("comments")
-        .orderBy("pin", "desc")
+	.orderBy("pin", "desc")
         .orderBy("timestamp", "desc") 
         .get()
         .then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                const comment = doc.data();
-                const commentElement = document.createElement("div");
-                commentElement.classList.add("comment");
+            querySnapshot.forEach(commentDoc => {
+                const comment = commentDoc.data();
+                // Now get user details
+                getUserDetails(comment.userId)
+                    .then(userName => {
+                        // Here you have the userName, now you can append the comment
+                        const commentElement = document.createElement("div");
+                        commentElement.classList.add("comment");
                 const commentDate = comment.timestamp ? comment.timestamp.toDate().toLocaleString() : "Unknown date";
                 const pinText = comment.pin ? "<strong>[Pinned]</strong> " : "";
-
-                commentElement.innerHTML = `
-                    <p>${pinText}<strong>${comment.userId}</strong> on ${commentDate}</p>
+                        commentElement.innerHTML = `
+                    <p>${pinText}<strong>${userName}</strong> on ${commentDate}</p>
                     <p>${comment.commentText}</p>
-                    <button class="btn btn-sm btn-secondary pinCommentBtn" data-id="${doc.id}">Pin/Unpin</button>
+                    <button class="btn btn-sm btn-secondary pinCommentBtn" data-id="${commentDoc.id}">Pin/Unpin</button>
                 `;
-                commentsContainer.appendChild(commentElement);
+                        commentsContainer.appendChild(commentElement);
+                    });
             });
         })
         .catch(error => {
             console.error("Error fetching comments:", error);
         });
-
-    // Event delegation for Pin buttons
+		    // Event delegation for Pin buttons
     commentsContainer.addEventListener('click', event => {
         if (event.target.classList.contains('pinCommentBtn')) {
             const commentId = event.target.getAttribute('data-id');
@@ -241,11 +280,37 @@ function fetchCommentsAndUpdateUI(assignmentId) {
     });
 }
 
-// Toggle pin status of a comment
+function getUserDetails(userId) {
+    return db.collection("user").where("loginID", "==", userId)
+        .get()
+        .then(userQuerySnapshot => {
+            if (!userQuerySnapshot.empty) {
+                const userDoc = userQuerySnapshot.docs[0];
+                const userData = userDoc.data();
+                const userType = userData.userType;
+                let collectionName = userType === 'lecturer' ? 'lecturer' : 'student';
+                let idField = userType === 'lecturer' ? 'lectutId' : 'studentID';
+
+                return db.collection(collectionName).where(idField, "==", userId)
+                    .get()
+                    .then(nameQuerySnapshot => {
+                        if (!nameQuerySnapshot.empty) {
+                            const nameDoc = nameQuerySnapshot.docs[0];
+                            return nameDoc.data().name; // Assuming 'name' is the field you want
+                        } else {
+                            return "Unknown User"; // Handle case where user is not found
+                        }
+                    });
+            } else {
+                return "Unknown User"; // Handle case where user is not found
+            }
+        });
+}
+
 // Toggle pin status of a comment
 function togglePinComment(assignmentId, commentId) {
     const commentsRef = db.collection("assignments").doc(assignmentId).collection("comments");
-    
+
     // Step 1: Get the current status of the comment to be toggled
     commentsRef.doc(commentId).get().then(doc => {
         if (!doc.exists) {
@@ -257,30 +322,85 @@ function togglePinComment(assignmentId, commentId) {
         // Step 2: Unpin all comments
         commentsRef.get().then(snapshot => {
             let batch = db.batch();
-            
+
             snapshot.forEach(doc => {
                 batch.update(commentsRef.doc(doc.id), { pin: false });
             });
 
             // Step 3: Commit the batch update
-            batch.commit().then(() => {
+            return batch.commit().then(() => {
                 // Step 4: If the comment was not already pinned, pin it after unpinning others
                 if (!currentPinStatus) {
-                    commentsRef.doc(commentId).update({ pin: true })
-                        .then(() => {
-                            console.log("Comment pinned successfully");
-                            fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section
-                        })
-                        .catch(error => console.error("Error pinning the comment:", error));
-                } else {
-                    console.log("Comment unpinned successfully");
-                    fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section if we're just unpinning
+                    return commentsRef.doc(commentId).update({ pin: true });
                 }
-            }).catch(error => console.error("Error unpinning comments:", error));
+                return Promise.resolve(); // Return a resolved Promise if we're just unpinning
+            });
+        }).then(() => {
+            console.log(`Comment ${currentPinStatus ? "unpinned" : "pinned"} successfully`);
+            fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section after updating pin status
+        }).catch(error => {
+            console.error(`Error ${currentPinStatus ? "unpinning" : "pinning"} the comment:`, error);
         });
     });
 }
 
+function deleteAssignmentAndComments(assignmentId) {
+    const assignmentRef = db.collection("assignments").doc(assignmentId);
+
+    // Delete comments subcollection first
+    assignmentRef.collection("comments").get().then(snapshot => {
+        // Create a batch to delete all comments
+        let batch = db.batch();
+        snapshot.docs.forEach(doc => {
+            batch.delete(assignmentRef.collection("comments").doc(doc.id));
+        });
+        // Commit the batch
+        return batch.commit();
+    }).then(() => {
+        // After deleting comments, delete the assignment
+        return assignmentRef.delete();
+    }).then(() => {
+        console.log("Assignment and its comments deleted successfully");
+        alert("Assignment Successfully Deleted");
+        window.location.href = "manageAssignment.html";
+    }).catch(error => {
+        console.error("Error deleting assignment and comments: ", error);
+    });
+}
+
+
+        function fetchAndDisplayClassDetails(classIds) {
+            const classDetailsContainer = document.getElementById("classDetailsContainer");
+            classDetailsContainer.innerHTML = ''; // Clear existing content
+
+            classIds.forEach(classId => {
+                db.collection("timetable").doc(classId).get().then(doc => {
+                    if (!doc.exists) {
+                        console.log(`No such class document with ID ${classId}`);
+                        return;
+                    }
+                    const classData = doc.data();
+                    const classDetailElement = document.createElement("div");
+                    classDetailElement.classList.add("card", "class-detail");
+
+                    // Using Bootstrap card to display each class detail
+                    classDetailElement.innerHTML = `
+                        <div class="card-header class-detail-header">Class Details</div>
+                        <div class="card-body class-detail-body">
+                            <h5 class="card-title">${classData.course}</h5>
+                            <p class="card-text">Class Type: ${classData.classType}</p>
+                            <p class="card-text">Venue: ${classData.venue}</p>
+                            <p class="card-text">Time: ${classData.startTime} - ${classData.endTime}</p>
+                            <p class="card-text">Day: ${classData.day}</p>
+                        </div>
+                    `;
+
+                    classDetailsContainer.appendChild(classDetailElement);
+                }).catch(error => {
+                    console.error(`Error fetching class with ID ${classId}:`, error);
+                });
+            });
+        }
 
 });
 
