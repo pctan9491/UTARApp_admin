@@ -89,14 +89,33 @@
       </div>
     </div>
   </body>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+      authDomain: "utarapp-9f3db.firebaseapp.com",
+      authDomain: "pctan9491.github.io",
+      projectId: "utarapp-9f3db",
+      storageBucket: "utarapp-9f3db.appspot.com",
+      messagingSenderId: "331019317153",
+      appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const resetPasswordFunction = firebase
+      .functions()
+      .httpsCallable("resetPassword");
     document
       .getElementById("resetForm")
       .addEventListener("submit", function (e) {
         e.preventDefault();
 
-        var password = document.getElementById("password").value;
-        var confirmPassword = document.getElementById("confirmPassword").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
 
         if (password !== confirmPassword) {
           alert("Passwords do not match.");
@@ -104,23 +123,17 @@
         }
 
         // Extract the token from the URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var token = urlParams.get("token");
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
 
-        // Example POST request to backend with fetch
-        fetch("/api/reset-password", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: token, password: password }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
+        resetPasswordFunction({ token: token, newPassword: password })
+          .then((result) => {
+            // Handle result here
             alert("Password has been successfully reset.");
-            window.location.href = "/login.html"; // Redirect to login page
+            window.location.href = "/login.html"; // Or any other success action
           })
           .catch((error) => {
+            // Handle errors here
             console.error("Error:", error);
             alert("Failed to reset password.");
           });
