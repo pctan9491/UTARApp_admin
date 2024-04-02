@@ -68,39 +68,57 @@ exports.sendAssignmentNotification = functions.firestore
 
 exports.resetPassword = functions.https.onCall(async (data, context) => {
   const { token, newPassword } = data;
-  const collections = ["student", "lecturer", "admin"];
-  let userDocRef = null;
+  let userIdentification = null;
 
-  // Attempt to find the user across the collections
-  for (const collection of collections) {
-    const querySnapshot = await admin
+  // Attempt to find the reset token across the 'student' and 'lecturer' collections
+  const queryResults = await Promise.all([
+    admin
       .firestore()
-      .collection(collection)
+      .collection("student")
       .where("resetToken", "==", token)
       .limit(1)
-      .get();
+      .get(),
+    admin
+      .firestore()
+      .collection("lecturer")
+      .where("resetToken", "==", token)
+      .limit(1)
+      .get(),
+  ]);
 
-    if (!querySnapshot.empty) {
-      userDocRef = querySnapshot.docs[0].ref;
-      break; // Exit loop if user is found
+  // Determine which collection (if any) contains the reset token
+  queryResults.forEach((result) => {
+    if (!result.empty) {
+      const doc = result.docs[0].data();
+      userIdentification = doc.studentID || doc.lectutId; // Assuming these are the fields for identification
     }
-  }
+  });
 
-  if (!userDocRef) {
-    throw new functions.https.HttpsError(
-      "not-found",
-      "User not found with the provided token."
-    );
+  if (!userIdentification) {
+    throw new functions.https.HttpsError("not-found", "Reset token not found.");
   }
 
   // Hash the new password securely
   const hashedPassword = await bcrypt.hash(newPassword, 8);
 
-  // Update the Firestore document for the user with the hashed password
+  // Now, update the user's password in the 'user' collection
+  const userDocSnapshot = await admin
+    .firestore()
+    .collection("user")
+    .where("loginID", "==", userIdentification)
+    .limit(1)
+    .get();
+
+  if (userDocSnapshot.empty) {
+    throw new functions.https.HttpsError("not-found", "User not found.");
+  }
+
+  // Assuming only one user matches, update the password
+  const userDocRef = userDocSnapshot.docs[0].ref;
   await userDocRef.update({
     password: hashedPassword,
-    resetToken: admin.firestore.FieldValue.delete(),
+    // Consider removing or updating any fields related to resetToken if stored in the user document
   });
 
-  return { success: true, message: "Password updated successfully" };
+  return { success: true, message: "Password updated successfully." };
 });
