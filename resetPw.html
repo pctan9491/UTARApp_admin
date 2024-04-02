@@ -114,33 +114,65 @@
     const resetPasswordFunction = firebase
       .functions()
       .httpsCallable("resetPassword");
+
     document
       .getElementById("resetForm")
-      .addEventListener("submit", function (e) {
+      .addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const password = document.getElementById("password").value;
         const confirmPassword =
           document.getElementById("confirmPassword").value;
-
         if (password !== confirmPassword) {
           alert("Passwords do not match.");
           return;
         }
 
-        // Extract the token from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get("token");
+        const token = new URLSearchParams(window.location.search).get("token");
+        let identification;
 
-        resetPasswordFunction({ token: token, newPassword: password })
-          .then((result) => {
-            // Handle result here
+        // Search across student and lecturer collections for a matching resetToken
+        const collections = ["student", "lecturer"];
+        for (const collection of collections) {
+          const querySnapshot = await db
+            .collection(collection)
+            .where("resetToken", "==", token)
+            .get();
+          if (!querySnapshot.empty) {
+            const docData = querySnapshot.docs[0].data();
+            identification = docData.studentID || docData.lectutId;
+            break; // Found the document, no need to continue the loop
+          }
+        }
+
+        if (!identification) {
+          alert("Token invalid or user not found.");
+          return;
+        }
+
+        // Assuming the identification variable now holds the studentID or lectutId,
+        // and you've ensured it matches the loginID in the 'user' collection:
+
+        const userQuerySnapshot = await db
+          .collection("user")
+          .where("loginID", "==", identification)
+          .get();
+        if (userQuerySnapshot.empty) {
+          alert("User not found.");
+          return;
+        }
+
+        // Direct update to Firestore (hypothetical and not recommended for production without security checks)
+        const userDocRef = userQuerySnapshot.docs[0].ref;
+        userDocRef
+          .update({
+            password: password, // Directly updating the password here for demonstration; consider security implications
+          })
+          .then(() => {
             alert("Password has been successfully reset.");
-            window.location.href = "/login.html"; // Or any other success action
           })
           .catch((error) => {
-            // Handle errors here
-            console.error("Error:", error);
+            console.error("Error updating password: ", error);
             alert("Failed to reset password.");
           });
       });
