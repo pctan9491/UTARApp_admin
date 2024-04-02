@@ -98,9 +98,6 @@ exports.resetPassword = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError("not-found", "Reset token not found.");
   }
 
-  // Hash the new password securely
-  const hashedPassword = await bcrypt.hash(newPassword, 8);
-
   // Now, update the user's password in the 'user' collection
   const userDocSnapshot = await admin
     .firestore()
@@ -116,7 +113,7 @@ exports.resetPassword = functions.https.onCall(async (data, context) => {
   // Assuming only one user matches, update the password
   const userDocRef = userDocSnapshot.docs[0].ref;
   await userDocRef.update({
-    password: hashedPassword,
+    password: newPassword,
     // Consider removing or updating any fields related to resetToken if stored in the user document
   });
 
