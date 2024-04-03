@@ -1,131 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <title>Notification CRUD</title>
-</head>
-<body class="bg-light">
-
+  </head>
+  <body class="bg-light">
     <div class="container mt-5">
-        <h2 class="mb-4">Create Notification</h2>
+      <h2 class="mb-4">Create Notification</h2>
 
-        <form id="createNotificationForm">
-            <div class="form-group">
-                <label for="title">Title:</label>
-                <input type="text" class="form-control" id="title" name="title" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
-            </div>
+      <form id="createNotificationForm">
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            name="title"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="currentDate">Current Date:</label>
-                <input type="date" class="form-control" id="currentDate" name="currentDate">
-            </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            rows="4"
+            required
+          ></textarea>
+        </div>
 
-            <div class="form-group">
-                <label for="photoUpload">Upload Photo:</label>
-                <input type="file" class="form-control-file" id="photoUpload" name="photoUpload" accept="image/*" multiple>
-            </div>
+        <div class="form-group">
+          <label for="currentDate">Current Date:</label>
+          <input
+            type="date"
+            class="form-control"
+            id="currentDate"
+            name="currentDate"
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="fileUpload">Upload File:</label>
-                <input type="file" class="form-control-file" id="fileUpload" name="fileUpload" multiple>
-            </div>
+        <div class="form-group">
+          <label for="photoUpload">Upload Photo:</label>
+          <input
+            type="file"
+            class="form-control-file"
+            id="photoUpload"
+            name="photoUpload"
+            accept="image/*"
+            multiple
+          />
+        </div>
 
-            <button type="button" class="btn btn-success" onclick="createNotification()">Create</button>
-        </form>
+        <div class="form-group">
+          <label for="fileUpload">Upload File:</label>
+          <input
+            type="file"
+            class="form-control-file"
+            id="fileUpload"
+            name="fileUpload"
+            multiple
+          />
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-success"
+          onclick="createNotification()"
+        >
+          Create
+        </button>
+      </form>
     </div>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-<script>
-    document.getElementById('currentDate').value = new Date().toISOString().slice(0, 10);  // Auto-fill current date
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script>
+      document.getElementById("currentDate").value = new Date()
+        .toISOString()
+        .slice(0, 10); // Auto-fill current date
 
-       // Initialize Firebase
-        const firebaseConfig = {
-              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-  authDomain: "utarapp-9f3db.firebaseapp.com",
-  projectId: "utarapp-9f3db",
-  storageBucket: "utarapp-9f3db.appspot.com",
-  messagingSenderId: "331019317153",
-  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-        firebase.initializeApp(firebaseConfig);
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
 
-function createNotification() {
-        const title = document.getElementById('title').value;
-        const description = document.getElementById('description').value;
-        const currentDate = document.getElementById('currentDate').value;
-        const photoUploads = document.getElementById('photoUpload').files;
-        const fileUploads = document.getElementById('fileUpload').files;
+      function createNotification() {
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("description").value;
+        const currentDate = document.getElementById("currentDate").value;
+        const photoUploads = document.getElementById("photoUpload").files;
+        const fileUploads = document.getElementById("fileUpload").files;
 
         const db = firebase.firestore();
         const storage = firebase.storage().ref();
 
         // Upload photo and file
         let photoURLs = [];
-    let fileURLs = [];
-	const uploadPromises = [];
-    // Handle photo uploads
-    for (let i = 0; i < photoUploads.length; i++) {
-        const photo = photoUploads[i];
-        const photoRef = storage.child('NotificationPhotos/' + photo.name);
-        const photoUploadPromise = photoRef.put(photo).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(url => {
-            photoURLs.push(url);
-        });
-        uploadPromises.push(photoUploadPromise);
-    }
-	// Handle file uploads
-    for (let i = 0; i < fileUploads.length; i++) {
-        const file = fileUploads[i];
-        const fileRef = storage.child('NotificationFiles/' + file.name);
-        const fileUploadPromise = fileRef.put(file).then(snapshot => {
-            return snapshot.ref.getDownloadURL();
-        }).then(url => {
-            fileURLs.push(url);
-        });
-        uploadPromises.push(fileUploadPromise);
-    }
+        let fileURLs = [];
+        const uploadPromises = [];
+        // Handle photo uploads
+        for (let i = 0; i < photoUploads.length; i++) {
+          const photo = photoUploads[i];
+          const photoRef = storage.child("NotificationPhotos/" + photo.name);
+          const photoUploadPromise = photoRef
+            .put(photo)
+            .then((snapshot) => {
+              return snapshot.ref.getDownloadURL();
+            })
+            .then((url) => {
+              photoURLs.push(url);
+            });
+          uploadPromises.push(photoUploadPromise);
+        }
+        // Handle file uploads
+        for (let i = 0; i < fileUploads.length; i++) {
+          const file = fileUploads[i];
+          const fileRef = storage.child("NotificationFiles/" + file.name);
+          const fileUploadPromise = fileRef
+            .put(file)
+            .then((snapshot) => {
+              return snapshot.ref.getDownloadURL();
+            })
+            .then((url) => {
+              fileURLs.push(url);
+            });
+          uploadPromises.push(fileUploadPromise);
+        }
 
-    Promise.all(uploadPromises).then(() => {
-        addNotificationToFirestore(title, description, currentDate, photoURLs, fileURLs);
-    }).catch(error => {
-        console.error("Error uploading files:", error);
-        alert("Error while uploading files");
-    });
-    }
-	function addNotificationToFirestore(title, description, currentDate, photoURLs, fileURLs) {
-    const db = firebase.firestore();
+        Promise.all(uploadPromises)
+          .then(() => {
+            addNotificationToFirestore(
+              title,
+              description,
+              currentDate,
+              photoURLs,
+              fileURLs
+            );
+          })
+          .catch((error) => {
+            console.error("Error uploading files:", error);
+            alert("Error while uploading files");
+          });
+      }
+      function addNotificationToFirestore(
+        title,
+        description,
+        currentDate,
+        photoURLs,
+        fileURLs
+      ) {
+        const db = firebase.firestore();
 
-    db.collection("notification").add({
-        title: title,
-        description: description,
-        date: currentDate,
-        photoURLs: photoURLs,
-        fileURLs: fileURLs
-    })
-    .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-        alert("Notification added successfully");
-    })
-    .catch((error) => {
-        console.error("Error adding document: ", error);
-        alert("Error while adding notification");
-    });
-}
-
-
-</script>
-
-</body>
+        db.collection("notification")
+          .add({
+            title: title,
+            description: description,
+            date: currentDate,
+            photoURLs: photoURLs,
+            fileURLs: fileURLs,
+          })
+          .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            alert("Notification added successfully");
+          })
+          .catch((error) => {
+            console.error("Error adding document: ", error);
+            alert("Error while adding notification");
+          });
+      }
+    </script>
+  </body>
 </html>
