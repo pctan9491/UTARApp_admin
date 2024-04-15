@@ -1,191 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Approve Timetable</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-	<style>
-    /* Add some spacing around each button */
-    .btn-custom {
-        margin: 0 10px 10px 0; 
-        padding: 10px 20px; 
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Add some spacing around each button */
+      .btn-custom {
+        margin: 0 10px 10px 0;
+        padding: 10px 20px;
         font-size: 16px;
         border-radius: 5px;
         transition: background-color 0.3s, transform 0.3s; /* Smooth transition for hover effects */
-    }
+      }
 
-    /* Hover effect: Slightly enlarges the button and changes the background color */
-    .btn-custom:hover {
-        background-color: #007BFF; 
+      /* Hover effect: Slightly enlarges the button and changes the background color */
+      .btn-custom:hover {
+        background-color: #007bff;
         transform: scale(1.05);
-    }
+      }
 
-    /* Active effect: Slightly reduces the size of the button when clicked */
-    .btn-custom:active {
+      /* Active effect: Slightly reduces the size of the button when clicked */
+      .btn-custom:active {
         transform: scale(0.95);
-    }
-</style>
-</head>
-<body>
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
+    <div class="container mt-5">
+      <h2>Timetable Approval</h2>
 
-<div class="container mt-5">
-    <h2>Timetable Approval</h2>
-	
-	    <div>
-        <button class="btn btn-primary btn-custom" onclick="loadView('timetable')">Normal Timetable</button>
-        <button class="btn btn-primary btn-custom" onclick="loadView('replacement')">Replacement Timetable</button>
-        <button class="btn btn-primary btn-custom" onclick="loadView('cancellation')">Cancellation Timetable</button>
-    </div>
+      <div>
+        <button
+          class="btn btn-primary btn-custom"
+          onclick="loadView('timetable')"
+        >
+          Normal Timetable
+        </button>
+        <button
+          class="btn btn-primary btn-custom"
+          onclick="loadView('replacement')"
+        >
+          Replacement Timetable
+        </button>
+        <button
+          class="btn btn-primary btn-custom"
+          onclick="loadView('cancellation')"
+        >
+          Cancellation Timetable
+        </button>
+      </div>
 
-<div id="normal-view" class="view" style="display: none;">
+      <div id="normal-view" class="view" style="display: none">
         <h3>Normal Timetable</h3>
         <table class="table table-striped" id="normal-timetable">
-            <thead>
+          <thead>
             <tr>
-                <th>Course</th>
-				<th>Lecturer Tutor</th>
-				<th>Class Type</th>
-                <th>Day</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Venue</th>
-                <th>Action</th>
+              <th>Course</th>
+              <th>Lecturer Tutor</th>
+              <th>Class Type</th>
+              <th>Day</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Venue</th>
+              <th>Action</th>
             </tr>
-        </thead>
-        <tbody id="timetable-timetable-list">
+          </thead>
+          <tbody id="timetable-timetable-list">
             <!-- The timetable entries will be populated here from Firebase -->
-        </tbody>
+          </tbody>
         </table>
-    </div>
+      </div>
 
-    <div id="replacement-view" class="view" style="display: none;">
+      <div id="replacement-view" class="view" style="display: none">
         <h3>Replacement Timetable</h3>
         <table class="table table-striped" id="replacement-timetable">
-            <thead>
+          <thead>
             <tr>
-                <th>Course</th>
-				<th>Lecturer Tutor</th>
-				<th>Class Type</th>
-                <th>Date</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Venue</th>
-                <th>Action</th>
+              <th>Course</th>
+              <th>Lecturer Tutor</th>
+              <th>Class Type</th>
+              <th>Date</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Venue</th>
+              <th>Action</th>
             </tr>
-        </thead>
-        <tbody id="replacement-timetable-list">
+          </thead>
+          <tbody id="replacement-timetable-list">
             <!-- The timetable entries will be populated here from Firebase -->
-        </tbody>
+          </tbody>
         </table>
-    </div>
+      </div>
 
-    <div id="cancellation-view" class="view" style="display: none;">
+      <div id="cancellation-view" class="view" style="display: none">
         <h3>Cancellation Timetable</h3>
         <table class="table table-striped" id="cancellation-timetable">
-            <thead>
+          <thead>
             <tr>
-                <th>Course</th>
-				<th>Lecturer Tutor</th>
-				<th>Class Type</th>
-                <th>Date</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Venue</th>
-                <th>Action</th>
+              <th>Course</th>
+              <th>Lecturer Tutor</th>
+              <th>Class Type</th>
+              <th>Date</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Venue</th>
+              <th>Action</th>
             </tr>
-        </thead>
-        <tbody id="cancellation-timetable-list">
+          </thead>
+          <tbody id="cancellation-timetable-list">
             <!-- The timetable entries will be populated here from Firebase -->
-        </tbody>
+          </tbody>
         </table>
+      </div>
     </div>
-</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-					<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<!-- TODO: Add your Firebase config and Firebase firestore SDK here -->
-<script>
-    const firebaseConfig = {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- TODO: Add your Firebase config and Firebase firestore SDK here -->
+    <script>
+      const firebaseConfig = {
         apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
         authDomain: "utarapp-9f3db.firebaseapp.com",
         projectId: "utarapp-9f3db",
         storageBucket: "utarapp-9f3db.appspot.com",
         messagingSenderId: "331019317153",
-        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-function loadTimetableData(type) {
-console.log("Loading timetable data for type:", type);
-    let targetElementId = `${type}-timetable-list`;
-	$(`#${targetElementId}`).empty();
+      function loadTimetableData(type) {
+        console.log("Loading timetable data for type:", type);
+        let targetElementId = `${type}-timetable-list`;
+        $(`#${targetElementId}`).empty();
 
-    if (type === 'replacement' || type === 'cancellation') {
-	console.log("About to query Firestore for collection:", type);
-        const collection = db.collection(type).where('approved', '==', false).where('rejection', '==', false)
-        collection.get().then((snapshot) => {
+        if (type === "replacement" || type === "cancellation") {
+          console.log("About to query Firestore for collection:", type);
+          const collection = db
+            .collection(type)
+            .where("approved", "==", false)
+            .where("rejection", "==", false);
+          collection.get().then((snapshot) => {
             snapshot.forEach((doc) => {
-                const data = doc.data();
-				console.log(`Fetched data for ${type}:`, data);
+              const data = doc.data();
+              console.log(`Fetched data for ${type}:`, data);
 
-                // Fetch the corresponding data from the timetable collection using timetableId
-                db.collection('timetable').doc(data.timetableId).get()
-                    .then((timetableDoc) => {
-                        const timetableData = timetableDoc.data();
+              // Fetch the corresponding data from the timetable collection using timetableId
+              db.collection("timetable")
+                .doc(data.timetableId)
+                .get()
+                .then((timetableDoc) => {
+                  const timetableData = timetableDoc.data();
 
-                        // Combine the data
-                        const combinedData = {
-                            ...timetableData,
-                            ...data,
-                            lecturerTutor: timetableData.lecturerTutor,
-                            classType: timetableData.classType,
-							documentId: doc.id,
-                        };
+                  // Combine the data
+                  const combinedData = {
+                    ...timetableData,
+                    ...data,
+                    lecturerTutor: timetableData.lecturerTutor,
+                    classType: timetableData.classType,
+                    documentId: doc.id,
+                  };
 
-                        // Append the combined data to the table
-                        appendToTable(combinedData, targetElementId, type);
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching from timetable collection: ", error);
-                    });
+                  // Append the combined data to the table
+                  appendToTable(combinedData, targetElementId, type);
+                })
+                .catch((error) => {
+                  console.error(
+                    "Error fetching from timetable collection: ",
+                    error
+                  );
+                });
             });
-        });
-    } else {
-        const timetableCollection = db.collection(type).where('approved', '==', false).where('rejection', '==', false);
-        timetableCollection.get().then((snapshot) => {
+          });
+        } else {
+          const timetableCollection = db
+            .collection(type)
+            .where("approved", "==", false)
+            .where("rejection", "==", false);
+          timetableCollection.get().then((snapshot) => {
             snapshot.forEach((doc) => {
-                const data = doc.data();
-				data.documentId = doc.id;
-				console.log("Document ID before appending:", doc.id);
-                appendToTable(data, targetElementId, type);
+              const data = doc.data();
+              data.documentId = doc.id;
+              console.log("Document ID before appending:", doc.id);
+              appendToTable(data, targetElementId, type);
             });
-        });
-    }
-}
+          });
+        }
+      }
 
+      function appendToTable(data, targetElementId, type) {
+        const lecturerId = data.lecturerTutor;
 
-function appendToTable(data, targetElementId, type) {
-    const lecturerId = data.lecturerTutor;
+        db.collection("lecturer")
+          .where("lectutId", "==", lecturerId)
+          .get()
+          .then((lecturerSnapshot) => {
+            let lecturerName = "Unknown"; // default name in case no match is found
+            lecturerSnapshot.forEach((lecturerDoc) => {
+              lecturerName = lecturerDoc.data().name; // Assuming the field for lecturer's name is 'name'
+              console.log("Appending data to table:", data);
+            });
 
-    db.collection('lecturer').where('lectutId', '==', lecturerId).get()
-    .then((lecturerSnapshot) => {
-        let lecturerName = "Unknown";  // default name in case no match is found
-        lecturerSnapshot.forEach((lecturerDoc) => {
-            lecturerName = lecturerDoc.data().name;  // Assuming the field for lecturer's name is 'name'
-			console.log("Appending data to table:", data);
-        });
+            let rowData = "";
 
-        let rowData = "";
-		
-        if (type === 'timetable') {
-						console.log("Appending the following row to", targetElementId, "\n", `<tr>${rowData}<td><button class="btn btn-success" onclick="approveTimetable('${data.documentId}', '${type}')">Approve</button><button class="btn btn-danger" onclick="rejectTimetable('${data.documentId}', '${type}')">Reject</button></td></tr>`);
-            rowData = `
+            if (type === "timetable") {
+              console.log(
+                "Appending the following row to",
+                targetElementId,
+                "\n",
+                `<tr>${rowData}<td><button class="btn btn-success" onclick="approveTimetable('${data.documentId}', '${type}')">Approve</button><button class="btn btn-danger" onclick="rejectTimetable('${data.documentId}', '${type}')">Reject</button></td></tr>`
+              );
+              rowData = `
                 <td>${data.course}</td>
                 <td>${lecturerName}</td>
                 <td>${data.classType}</td>
@@ -194,9 +233,8 @@ function appendToTable(data, targetElementId, type) {
                 <td>${data.endTime}</td>
                 <td>${data.venue}</td>
             `;
-
-        } else if (type === 'replacement') {
-            rowData = `
+            } else if (type === "replacement") {
+              rowData = `
                 <td>${data.courseName}</td>
                 <td>${lecturerName}</td>
                 <td>${data.classType}</td>
@@ -205,8 +243,8 @@ function appendToTable(data, targetElementId, type) {
                 <td>${data.endTime}</td>
                 <td>${data.venue}</td>
             `;
-        } else if (type === 'cancellation') {
-            rowData = `
+            } else if (type === "cancellation") {
+              rowData = `
                 <td>${data.course}</td>
                 <td>${lecturerName}</td>
                 <td>${data.classType}</td>
@@ -215,73 +253,74 @@ function appendToTable(data, targetElementId, type) {
                 <td>${data.endTime}</td>
                 <td>${data.venue}</td>
             `;
-			console.log("Populating rowData for timetable:", rowData);
-        }
+              console.log("Populating rowData for timetable:", rowData);
+            }
 
-        // Append the constructed row data to the table
-$(`#${targetElementId}`).append(`
+            // Append the constructed row data to the table
+            $(`#${targetElementId}`).append(`
     <tr>
         ${rowData}
         <td><button class="btn btn-success" onclick="approveTimetable('${data.documentId}', '${type}')">Approve</button>
         <button class="btn btn-danger" onclick="rejectTimetable('${data.documentId}', '${type}')">Reject</button></td>
     </tr>
 `);
+          })
+          .catch((error) => {
+            console.error("Error fetching lecturer name: ", error);
+          });
+      }
 
-    })
-    .catch((error) => {
-        console.error("Error fetching lecturer name: ", error);
-    });
-}
-
-
-    function loadView(type) {
+      function loadView(type) {
         // Hide all views
-        $('.view').hide();
+        $(".view").hide();
 
         // Clear tables
         $(".timetable-list").empty();
 
         // Show selected view and load its data
-        if (type === 'timetable') {
-            $('#normal-view').show();
-            loadTimetableData('timetable');
-        } else if (type === 'replacement') {
-            $('#replacement-view').show();
-            loadTimetableData('replacement');
-        } else if (type === 'cancellation') {
-            $('#cancellation-view').show();
-            loadTimetableData('cancellation');
+        if (type === "timetable") {
+          $("#normal-view").show();
+          loadTimetableData("timetable");
+        } else if (type === "replacement") {
+          $("#replacement-view").show();
+          loadTimetableData("replacement");
+        } else if (type === "cancellation") {
+          $("#cancellation-view").show();
+          loadTimetableData("cancellation");
         }
-    }
+      }
 
-function approveTimetable(timetableId, type) {
-    db.collection(type).doc(timetableId).update({
-        approved: true,
-		rejection: false
-    })
-    .then(() => {
-        alert("Timetable approved successfully.");
-        loadView(type);
-    })
-    .catch((error) => {
-        console.error("Error updating document: ", error);
-    });
-}
+      function approveTimetable(timetableId, type) {
+        db.collection(type)
+          .doc(timetableId)
+          .update({
+            approved: true,
+            rejection: false,
+          })
+          .then(() => {
+            alert("Timetable approved successfully.");
+            loadView(type);
+          })
+          .catch((error) => {
+            console.error("Error updating document: ", error);
+          });
+      }
 
-function rejectTimetable(timetableId, type) {
-    db.collection(type).doc(timetableId).update({
-        rejection: true,
-        approved: false
-    })
-    .then(() => {
-        alert("Timetable rejected successfully!");
-        loadView(type);
-    })
-    .catch((error) => {
-        console.error("Error updating document: ", error);
-    });
-}
-
-</script>
-</body>
+      function rejectTimetable(timetableId, type) {
+        db.collection(type)
+          .doc(timetableId)
+          .update({
+            rejection: true,
+            approved: false,
+          })
+          .then(() => {
+            alert("Timetable rejected successfully!");
+            loadView(type);
+          })
+          .catch((error) => {
+            console.error("Error updating document: ", error);
+          });
+      }
+    </script>
+  </body>
 </html>

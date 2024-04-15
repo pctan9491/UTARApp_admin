@@ -1,390 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Assignment Details</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-	<style>
-    .comment {
+    <style>
+      .comment {
         border-bottom: 1px solid #eee;
         padding-bottom: 10px;
         margin-bottom: 10px;
-    }
-	
-	 .class-detail {
+      }
+
+      .class-detail {
         margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,.1);
-    }
-    .class-detail-header {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .class-detail-header {
         background-color: #f8f9fa;
         border-bottom: 1px solid #e9ecef;
         padding: 10px 15px;
-    }
-    .class-detail-body {
+      }
+      .class-detail-body {
         padding: 15px;
-    }
-</style>
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
 
-</head>
-<body>
-
-<div class="container-fluid">
-    <div class="row">
+    <div class="container-fluid">
+      <div class="row">
         <div class="col-md-8 offset-md-2">
-            <div class="card">
-			                <!-- Card Header -->
-<div class="card-header">
-    <h1 class="card-title mb-0">Assignment Details</h1>
-	<a href="manageAssignment.html" class="card-link">Back to Assignments List</a>
-    <button id="editAssignment" class="btn btn-primary float-right ml-2">Edit Assignment</button>
-    <button id="deleteAssignment" class="btn btn-danger float-right">Delete Assignment</button>
-</div>
-
-                <div class="card-body">
-                    <h5 class="card-title mb-0" id="assignmentTitle">Loading...</h5>
-                    <h6 class="card-subtitle mb-3 text-muted" id="assignmentDueDate">Loading...</h6>
-                    <div id="assignmentClasses" class="mt-4">
-                        <h4>Class Details</h4>
-                        <div id="classDetailsContainer" class="accordion" role="tablist"></div>
-                        <button id="toggleClassDetails" class="btn btn-info mt-3" style="display: none;">
-                            Show More <i class="fas fa-angle-down"></i>
-                        </button>
-                    </div>
-                    <p class="card-text mb-4" id="assignmentDescription">Please wait, fetching details...</p>
-                    <div id="assignmentImages" class="row"></div>
-                    <div id="assignmentDocuments" class="mt-3"></div>
-                </div>
-                <div class="card-footer">
-                    <button id="likeButton" class="btn btn-outline-primary">Like</button>
-                    <span id="likeCount">0 Likes</span>
-
-<!-- Comments Section -->
-    <div class="mt-4">
-        <h4>Add Comment</h4>
-        <div class="input-group mb-3">
-            <input type="text" id="commentInput" class="form-control" placeholder="Write a comment...">
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="submitComment">Post</button>
+          <div class="card">
+            <!-- Card Header -->
+            <div class="card-header">
+              <h1 class="card-title mb-0">Assignment Details</h1>
+              <a href="manageAssignment.html" class="card-link"
+                >Back to Assignments List</a
+              >
+              <button
+                id="editAssignment"
+                class="btn btn-primary float-right ml-2"
+              >
+                Edit Assignment
+              </button>
+              <button id="deleteAssignment" class="btn btn-danger float-right">
+                Delete Assignment
+              </button>
             </div>
-        </div>
-    </div>					
 
-    <div id="assignmentComments" class="mt-4">
-        <h4>Comments</h4>
-        <div id="commentsContainer">
-            <!-- Comments will be dynamically inserted here -->
-        </div>
-    </div>
-                </div>
+            <div class="card-body">
+              <h5 class="card-title mb-0" id="assignmentTitle">Loading...</h5>
+              <h6 class="card-subtitle mb-3 text-muted" id="assignmentDueDate">
+                Loading...
+              </h6>
+              <div id="assignmentClasses" class="mt-4">
+                <h4>Class Details</h4>
+                <div
+                  id="classDetailsContainer"
+                  class="accordion"
+                  role="tablist"
+                ></div>
+                <button
+                  id="toggleClassDetails"
+                  class="btn btn-info mt-3"
+                  style="display: none"
+                >
+                  Show More <i class="fas fa-angle-down"></i>
+                </button>
+              </div>
+              <p class="card-text mb-4" id="assignmentDescription">
+                Please wait, fetching details...
+              </p>
+              <div id="assignmentImages" class="row"></div>
+              <div id="assignmentDocuments" class="mt-3"></div>
             </div>
+            <div class="card-footer">
+              <button id="likeButton" class="btn btn-outline-primary">
+                Like
+              </button>
+              <span id="likeCount">0 Likes</span>
+
+              <!-- Comments Section -->
+              <div class="mt-4">
+                <h4>Add Comment</h4>
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    id="commentInput"
+                    class="form-control"
+                    placeholder="Write a comment..."
+                  />
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      id="submitComment"
+                    >
+                      Post
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="assignmentComments" class="mt-4">
+                <h4>Comments</h4>
+                <div id="commentsContainer">
+                  <!-- Comments will be dynamically inserted here -->
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<script>
-// Your web app's Firebase configuration (the same as on your assignments list page)
-var firebaseConfig = {
-    apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-    authDomain: "utarapp-9f3db.firebaseapp.com",
-    projectId: "utarapp-9f3db",
-    storageBucket: "utarapp-9f3db.appspot.com",
-    messagingSenderId: "331019317153",
-    appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
+    <script>
+      // Your web app's Firebase configuration (the same as on your assignments list page)
+      var firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      var db = firebase.firestore();
 
-function getQueryParams() {
-    var queryParams = {};
-    location.search.substr(1).split("&").forEach(function(item) {
-        let [key, value] = item.split("=");
-        queryParams[key] = decodeURIComponent(value);
-    });
-    return queryParams;
-}
+      function getQueryParams() {
+        var queryParams = {};
+        location.search
+          .substr(1)
+          .split("&")
+          .forEach(function (item) {
+            let [key, value] = item.split("=");
+            queryParams[key] = decodeURIComponent(value);
+          });
+        return queryParams;
+      }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const queryParams = getQueryParams();
-    const assignmentId = queryParams.assignmentId;
-    const loggedInLecturerId = localStorage.getItem('saveLoginID');
-    const docRef = db.collection("assignments").doc(assignmentId);
+      document.addEventListener("DOMContentLoaded", function () {
+        const queryParams = getQueryParams();
+        const assignmentId = queryParams.assignmentId;
+        const loggedInLecturerId = localStorage.getItem("saveLoginID");
+        const docRef = db.collection("assignments").doc(assignmentId);
 
-    // This function updates the UI based on the fetched assignment data
-function updateUI(assignment) {
-    if (!Array.isArray(assignment.imageUrls) || !Array.isArray(assignment.documentUrls)) {
-        console.error("Unexpected data format for imageUrls or documentUrls", assignment);
-        // Optionally, you can return from the function here to avoid executing further code
-        return;
-    }
-    document.getElementById("assignmentTitle").innerText = assignment.title;
-    document.getElementById("assignmentDueDate").innerText = `Due Date: ${assignment.dueDate}`;
-    document.getElementById("assignmentDescription").innerText = assignment.description || "No additional information provided.";
-    
-    // Clear existing images before adding new ones
-    const imagesContainer = document.getElementById("assignmentImages");
-    imagesContainer.innerHTML = ''; // Clear existing content
-    if (assignment.imageUrls && assignment.imageUrls.length > 0) {
-        assignment.imageUrls.forEach((url) => {
-            const colDiv = document.createElement("div");
-            colDiv.classList.add("col-md-4", "col-sm-6", "mb-3");
-            const imgElement = document.createElement("img");
-            imgElement.src = url;
-            imgElement.classList.add("img-fluid", "rounded");
-            colDiv.appendChild(imgElement);
-            imagesContainer.appendChild(colDiv);
-        });
-    }
+        // This function updates the UI based on the fetched assignment data
+        function updateUI(assignment) {
+          if (
+            !Array.isArray(assignment.imageUrls) ||
+            !Array.isArray(assignment.documentUrls)
+          ) {
+            console.error(
+              "Unexpected data format for imageUrls or documentUrls",
+              assignment
+            );
+            // Optionally, you can return from the function here to avoid executing further code
+            return;
+          }
+          document.getElementById("assignmentTitle").innerText =
+            assignment.title;
+          document.getElementById(
+            "assignmentDueDate"
+          ).innerText = `Due Date: ${assignment.dueDate}`;
+          document.getElementById("assignmentDescription").innerText =
+            assignment.description || "No additional information provided.";
 
-    // Clear existing documents before adding new ones
-    const documentsContainer = document.getElementById("assignmentDocuments");
-    documentsContainer.innerHTML = ''; // Clear existing content
-    if (assignment.documentUrls && assignment.documentUrls.length > 0) {
-        assignment.documentUrls.forEach((url, index) => {
-            const linkElement = document.createElement("a");
-            linkElement.href = url;
-            linkElement.innerText = `Document ${index + 1}`;
-            linkElement.classList.add("d-block", "mb-2");
-            linkElement.target = "_blank";
-            documentsContainer.appendChild(linkElement);
-        });
-    }
+          // Clear existing images before adding new ones
+          const imagesContainer = document.getElementById("assignmentImages");
+          imagesContainer.innerHTML = ""; // Clear existing content
+          if (assignment.imageUrls && assignment.imageUrls.length > 0) {
+            assignment.imageUrls.forEach((url) => {
+              const colDiv = document.createElement("div");
+              colDiv.classList.add("col-md-4", "col-sm-6", "mb-3");
+              const imgElement = document.createElement("img");
+              imgElement.src = url;
+              imgElement.classList.add("img-fluid", "rounded");
+              colDiv.appendChild(imgElement);
+              imagesContainer.appendChild(colDiv);
+            });
+          }
 
-    // Update likes UI
-    const likeButton = document.getElementById("likeButton");
-    const likeCount = document.getElementById("likeCount");
-    likeCount.textContent = `${assignment.likes.length} Likes`;
-    likeButton.classList.toggle("btn-primary", assignment.likes.includes(loggedInLecturerId));
-    likeButton.classList.toggle("btn-outline-primary", !assignment.likes.includes(loggedInLecturerId));
-    likeButton.textContent = assignment.likes.includes(loggedInLecturerId) ? "Liked" : "Like";
-}
+          // Clear existing documents before adding new ones
+          const documentsContainer = document.getElementById(
+            "assignmentDocuments"
+          );
+          documentsContainer.innerHTML = ""; // Clear existing content
+          if (assignment.documentUrls && assignment.documentUrls.length > 0) {
+            assignment.documentUrls.forEach((url, index) => {
+              const linkElement = document.createElement("a");
+              linkElement.href = url;
+              linkElement.innerText = `Document ${index + 1}`;
+              linkElement.classList.add("d-block", "mb-2");
+              linkElement.target = "_blank";
+              documentsContainer.appendChild(linkElement);
+            });
+          }
 
+          // Update likes UI
+          const likeButton = document.getElementById("likeButton");
+          const likeCount = document.getElementById("likeCount");
+          likeCount.textContent = `${assignment.likes.length} Likes`;
+          likeButton.classList.toggle(
+            "btn-primary",
+            assignment.likes.includes(loggedInLecturerId)
+          );
+          likeButton.classList.toggle(
+            "btn-outline-primary",
+            !assignment.likes.includes(loggedInLecturerId)
+          );
+          likeButton.textContent = assignment.likes.includes(loggedInLecturerId)
+            ? "Liked"
+            : "Like";
+        }
 
-    if (assignmentId) {
-        // Fetch and update UI initially
-        fetchAssignmentAndUpdateUI();
+        if (assignmentId) {
+          // Fetch and update UI initially
+          fetchAssignmentAndUpdateUI();
 
-        // Attach the event listener for the like button only once
-        document.getElementById("likeButton").addEventListener("click", function() {
-            toggleLike();
-        });
-		
-		 // Handle comment submission
-        document.getElementById("submitComment").addEventListener("click", function() {
-            const commentText = document.getElementById("commentInput").value.trim();
-            if (!commentText) {
+          // Attach the event listener for the like button only once
+          document
+            .getElementById("likeButton")
+            .addEventListener("click", function () {
+              toggleLike();
+            });
+
+          // Handle comment submission
+          document
+            .getElementById("submitComment")
+            .addEventListener("click", function () {
+              const commentText = document
+                .getElementById("commentInput")
+                .value.trim();
+              if (!commentText) {
                 alert("Please write a comment before posting.");
                 return;
-            }
+              }
 
-            // Assuming you have a way to get the current user's ID; using loggedInLecturerId as placeholder
-            const newComment = {
+              // Assuming you have a way to get the current user's ID; using loggedInLecturerId as placeholder
+              const newComment = {
                 userId: loggedInLecturerId, // This should ideally be the user's name or identifier
                 commentText: commentText,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Sets the timestamp on the server
-				pin: false
-            };
-			 db.collection("assignments").doc(assignmentId).collection("comments").add(newComment)
+                pin: false,
+              };
+              db.collection("assignments")
+                .doc(assignmentId)
+                .collection("comments")
+                .add(newComment)
                 .then(() => {
-                    document.getElementById("commentInput").value = ''; // Clear input field
-                    fetchCommentsAndUpdateUI(assignmentId); // Refresh comments to include the new one
+                  document.getElementById("commentInput").value = ""; // Clear input field
+                  fetchCommentsAndUpdateUI(assignmentId); // Refresh comments to include the new one
                 })
-                .catch(error => {
-                    console.error("Error adding comment:", error);
+                .catch((error) => {
+                  console.error("Error adding comment:", error);
                 });
-		});
-		document.getElementById("deleteAssignment").addEventListener("click", function() {
-        deleteAssignmentAndComments(assignmentId);
-    });
-			document.getElementById("editAssignment").addEventListener("click", function() {
-			window.location.href = "assignAssignmentTask.html?assignmentId=" + assignmentId;
-    });
-    }
+            });
+          document
+            .getElementById("deleteAssignment")
+            .addEventListener("click", function () {
+              deleteAssignmentAndComments(assignmentId);
+            });
+          document
+            .getElementById("editAssignment")
+            .addEventListener("click", function () {
+              window.location.href =
+                "assignAssignmentTask.html?assignmentId=" + assignmentId;
+            });
+        }
 
-    function fetchAssignmentAndUpdateUI() {
-        docRef.get().then((doc) => {
-            if (!doc.exists) {
+        function fetchAssignmentAndUpdateUI() {
+          docRef
+            .get()
+            .then((doc) => {
+              if (!doc.exists) {
                 console.log("No such document!");
                 return;
-            }
-			console.log("Fetched assignment data:", doc.data());
-            updateUI(doc.data());
-			fetchCommentsAndUpdateUI(assignmentId);
-			
-			// Now fetch class details if there are any class IDs
-			const classIds = doc.data().classes || [];
-        fetchAndDisplayClassDetails(classIds);
-        }).catch(error => console.error("Error getting document:", error));
-    }
+              }
+              console.log("Fetched assignment data:", doc.data());
+              updateUI(doc.data());
+              fetchCommentsAndUpdateUI(assignmentId);
 
-    function toggleLike() {
-        docRef.get().then((doc) => {
+              // Now fetch class details if there are any class IDs
+              const classIds = doc.data().classes || [];
+              fetchAndDisplayClassDetails(classIds);
+            })
+            .catch((error) => console.error("Error getting document:", error));
+        }
+
+        function toggleLike() {
+          docRef.get().then((doc) => {
             if (!doc.exists) {
-                console.log("No such document!");
-                return;
+              console.log("No such document!");
+              return;
             }
             const assignment = doc.data();
             const likes = assignment.likes || [];
             const isLiked = likes.includes(loggedInLecturerId);
 
             // Toggle like status
-            const updatedLikes = isLiked ? likes.filter(id => id !== loggedInLecturerId) : [...likes, loggedInLecturerId];
+            const updatedLikes = isLiked
+              ? likes.filter((id) => id !== loggedInLecturerId)
+              : [...likes, loggedInLecturerId];
 
             // Update Firestore
-            docRef.update({ likes: updatedLikes }).then(() => {
+            docRef
+              .update({ likes: updatedLikes })
+              .then(() => {
                 fetchAssignmentAndUpdateUI(); // Refresh UI after updating Firestore
-            }).catch(error => console.error("Error updating likes:", error));
-        });
-    }
-	
-function fetchCommentsAndUpdateUI(assignmentId) {
-    const commentsContainer = document.getElementById("commentsContainer");
-    commentsContainer.innerHTML = ''; // Clear existing comments
+              })
+              .catch((error) => console.error("Error updating likes:", error));
+          });
+        }
 
-    db.collection("assignments").doc(assignmentId).collection("comments")
-	.orderBy("pin", "desc")
-        .orderBy("timestamp", "desc") 
-        .get()
-        .then(querySnapshot => {
-            querySnapshot.forEach(commentDoc => {
+        function fetchCommentsAndUpdateUI(assignmentId) {
+          const commentsContainer =
+            document.getElementById("commentsContainer");
+          commentsContainer.innerHTML = ""; // Clear existing comments
+
+          db.collection("assignments")
+            .doc(assignmentId)
+            .collection("comments")
+            .orderBy("pin", "desc")
+            .orderBy("timestamp", "desc")
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((commentDoc) => {
                 const comment = commentDoc.data();
                 // Now get user details
-                getUserDetails(comment.userId)
-                    .then(userName => {
-                        // Here you have the userName, now you can append the comment
-                        const commentElement = document.createElement("div");
-                        commentElement.classList.add("comment");
-                const commentDate = comment.timestamp ? comment.timestamp.toDate().toLocaleString() : "Unknown date";
-                const pinText = comment.pin ? "<strong>[Pinned]</strong> " : "";
-                        commentElement.innerHTML = `
+                getUserDetails(comment.userId).then((userName) => {
+                  // Here you have the userName, now you can append the comment
+                  const commentElement = document.createElement("div");
+                  commentElement.classList.add("comment");
+                  const commentDate = comment.timestamp
+                    ? comment.timestamp.toDate().toLocaleString()
+                    : "Unknown date";
+                  const pinText = comment.pin
+                    ? "<strong>[Pinned]</strong> "
+                    : "";
+                  commentElement.innerHTML = `
                     <p>${pinText}<strong>${userName}</strong> on ${commentDate}</p>
                     <p>${comment.commentText}</p>
                     <button class="btn btn-sm btn-secondary pinCommentBtn" data-id="${commentDoc.id}">Pin/Unpin</button>
                 `;
-                        commentsContainer.appendChild(commentElement);
-                    });
+                  commentsContainer.appendChild(commentElement);
+                });
+              });
+            })
+            .catch((error) => {
+              console.error("Error fetching comments:", error);
             });
-        })
-        .catch(error => {
-            console.error("Error fetching comments:", error);
-        });
-		    // Event delegation for Pin buttons
-    commentsContainer.addEventListener('click', event => {
-        if (event.target.classList.contains('pinCommentBtn')) {
-            const commentId = event.target.getAttribute('data-id');
-            togglePinComment(assignmentId, commentId);
+          // Event delegation for Pin buttons
+          commentsContainer.addEventListener("click", (event) => {
+            if (event.target.classList.contains("pinCommentBtn")) {
+              const commentId = event.target.getAttribute("data-id");
+              togglePinComment(assignmentId, commentId);
+            }
+          });
         }
-    });
-}
 
-function getUserDetails(userId) {
-    return db.collection("user").where("loginID", "==", userId)
-        .get()
-        .then(userQuerySnapshot => {
-            if (!userQuerySnapshot.empty) {
+        function getUserDetails(userId) {
+          return db
+            .collection("user")
+            .where("loginID", "==", userId)
+            .get()
+            .then((userQuerySnapshot) => {
+              if (!userQuerySnapshot.empty) {
                 const userDoc = userQuerySnapshot.docs[0];
                 const userData = userDoc.data();
                 const userType = userData.userType;
-                let collectionName = userType === 'lecturer' ? 'lecturer' : 'student';
-                let idField = userType === 'lecturer' ? 'lectutId' : 'studentID';
+                let collectionName =
+                  userType === "lecturer" ? "lecturer" : "student";
+                let idField =
+                  userType === "lecturer" ? "lectutId" : "studentID";
 
-                return db.collection(collectionName).where(idField, "==", userId)
-                    .get()
-                    .then(nameQuerySnapshot => {
-                        if (!nameQuerySnapshot.empty) {
-                            const nameDoc = nameQuerySnapshot.docs[0];
-                            return nameDoc.data().name; // Assuming 'name' is the field you want
-                        } else {
-                            return "Unknown User"; // Handle case where user is not found
-                        }
-                    });
-            } else {
+                return db
+                  .collection(collectionName)
+                  .where(idField, "==", userId)
+                  .get()
+                  .then((nameQuerySnapshot) => {
+                    if (!nameQuerySnapshot.empty) {
+                      const nameDoc = nameQuerySnapshot.docs[0];
+                      return nameDoc.data().name; // Assuming 'name' is the field you want
+                    } else {
+                      return "Unknown User"; // Handle case where user is not found
+                    }
+                  });
+              } else {
                 return "Unknown User"; // Handle case where user is not found
-            }
-        });
-}
-
-// Toggle pin status of a comment
-function togglePinComment(assignmentId, commentId) {
-    const commentsRef = db.collection("assignments").doc(assignmentId).collection("comments");
-
-    // Step 1: Get the current status of the comment to be toggled
-    commentsRef.doc(commentId).get().then(doc => {
-        if (!doc.exists) {
-            console.log("No such comment!");
-            return;
+              }
+            });
         }
-        const currentPinStatus = doc.data().pin || false;
 
-        // Step 2: Unpin all comments
-        commentsRef.get().then(snapshot => {
-            let batch = db.batch();
+        // Toggle pin status of a comment
+        function togglePinComment(assignmentId, commentId) {
+          const commentsRef = db
+            .collection("assignments")
+            .doc(assignmentId)
+            .collection("comments");
 
-            snapshot.forEach(doc => {
-                batch.update(commentsRef.doc(doc.id), { pin: false });
+          // Step 1: Get the current status of the comment to be toggled
+          commentsRef
+            .doc(commentId)
+            .get()
+            .then((doc) => {
+              if (!doc.exists) {
+                console.log("No such comment!");
+                return;
+              }
+              const currentPinStatus = doc.data().pin || false;
+
+              // Step 2: Unpin all comments
+              commentsRef
+                .get()
+                .then((snapshot) => {
+                  let batch = db.batch();
+
+                  snapshot.forEach((doc) => {
+                    batch.update(commentsRef.doc(doc.id), { pin: false });
+                  });
+
+                  // Step 3: Commit the batch update
+                  return batch.commit().then(() => {
+                    // Step 4: If the comment was not already pinned, pin it after unpinning others
+                    if (!currentPinStatus) {
+                      return commentsRef.doc(commentId).update({ pin: true });
+                    }
+                    return Promise.resolve(); // Return a resolved Promise if we're just unpinning
+                  });
+                })
+                .then(() => {
+                  console.log(
+                    `Comment ${
+                      currentPinStatus ? "unpinned" : "pinned"
+                    } successfully`
+                  );
+                  fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section after updating pin status
+                })
+                .catch((error) => {
+                  console.error(
+                    `Error ${
+                      currentPinStatus ? "unpinning" : "pinning"
+                    } the comment:`,
+                    error
+                  );
+                });
             });
+        }
 
-            // Step 3: Commit the batch update
-            return batch.commit().then(() => {
-                // Step 4: If the comment was not already pinned, pin it after unpinning others
-                if (!currentPinStatus) {
-                    return commentsRef.doc(commentId).update({ pin: true });
-                }
-                return Promise.resolve(); // Return a resolved Promise if we're just unpinning
+        function deleteAssignmentAndComments(assignmentId) {
+          const assignmentRef = db.collection("assignments").doc(assignmentId);
+
+          // Delete comments subcollection first
+          assignmentRef
+            .collection("comments")
+            .get()
+            .then((snapshot) => {
+              // Create a batch to delete all comments
+              let batch = db.batch();
+              snapshot.docs.forEach((doc) => {
+                batch.delete(assignmentRef.collection("comments").doc(doc.id));
+              });
+              // Commit the batch
+              return batch.commit();
+            })
+            .then(() => {
+              // After deleting comments, delete the assignment
+              return assignmentRef.delete();
+            })
+            .then(() => {
+              console.log("Assignment and its comments deleted successfully");
+              alert("Assignment Successfully Deleted");
+              window.location.href = "manageAssignment.html";
+            })
+            .catch((error) => {
+              console.error("Error deleting assignment and comments: ", error);
             });
-        }).then(() => {
-            console.log(`Comment ${currentPinStatus ? "unpinned" : "pinned"} successfully`);
-            fetchCommentsAndUpdateUI(assignmentId); // Refresh the comments section after updating pin status
-        }).catch(error => {
-            console.error(`Error ${currentPinStatus ? "unpinning" : "pinning"} the comment:`, error);
-        });
-    });
-}
-
-function deleteAssignmentAndComments(assignmentId) {
-    const assignmentRef = db.collection("assignments").doc(assignmentId);
-
-    // Delete comments subcollection first
-    assignmentRef.collection("comments").get().then(snapshot => {
-        // Create a batch to delete all comments
-        let batch = db.batch();
-        snapshot.docs.forEach(doc => {
-            batch.delete(assignmentRef.collection("comments").doc(doc.id));
-        });
-        // Commit the batch
-        return batch.commit();
-    }).then(() => {
-        // After deleting comments, delete the assignment
-        return assignmentRef.delete();
-    }).then(() => {
-        console.log("Assignment and its comments deleted successfully");
-        alert("Assignment Successfully Deleted");
-        window.location.href = "manageAssignment.html";
-    }).catch(error => {
-        console.error("Error deleting assignment and comments: ", error);
-    });
-}
-
+        }
 
         function fetchAndDisplayClassDetails(classIds) {
-            const classDetailsContainer = document.getElementById("classDetailsContainer");
-            classDetailsContainer.innerHTML = ''; // Clear existing content
+          const classDetailsContainer = document.getElementById(
+            "classDetailsContainer"
+          );
+          classDetailsContainer.innerHTML = ""; // Clear existing content
 
-            classIds.forEach(classId => {
-                db.collection("timetable").doc(classId).get().then(doc => {
-                    if (!doc.exists) {
-                        console.log(`No such class document with ID ${classId}`);
-                        return;
-                    }
-                    const classData = doc.data();
-                    const classDetailElement = document.createElement("div");
-                    classDetailElement.classList.add("card", "class-detail");
+          classIds.forEach((classId) => {
+            db.collection("timetable")
+              .doc(classId)
+              .get()
+              .then((doc) => {
+                if (!doc.exists) {
+                  console.log(`No such class document with ID ${classId}`);
+                  return;
+                }
+                const classData = doc.data();
+                const classDetailElement = document.createElement("div");
+                classDetailElement.classList.add("card", "class-detail");
 
-                    // Using Bootstrap card to display each class detail
-                    classDetailElement.innerHTML = `
+                // Using Bootstrap card to display each class detail
+                classDetailElement.innerHTML = `
                         <div class="card-header class-detail-header">Class Details</div>
                         <div class="card-body class-detail-body">
                             <h5 class="card-title">${classData.course}</h5>
@@ -395,15 +521,17 @@ function deleteAssignmentAndComments(assignmentId) {
                         </div>
                     `;
 
-                    classDetailsContainer.appendChild(classDetailElement);
-                }).catch(error => {
-                    console.error(`Error fetching class with ID ${classId}:`, error);
-                });
-            });
+                classDetailsContainer.appendChild(classDetailElement);
+              })
+              .catch((error) => {
+                console.error(
+                  `Error fetching class with ID ${classId}:`,
+                  error
+                );
+              });
+          });
         }
-
-});
-
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>

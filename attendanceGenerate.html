@@ -1,51 +1,57 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Attendance QR Code</title>
     <!-- Include for the QR Code library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
     <h1>Attendance QR Code</h1>
     <div id="qrcode"></div>
     <script type="text/javascript">
-        function generateDynamicQR() {
-            var currentDate = new Date();
-            var currentHour = currentDate.getHours();
-            var currentDay = currentDate.getDay(); // Sunday - 0, Monday - 1, etc.
+      function generateDynamicQR() {
+        var currentDate = new Date();
+        var currentHour = currentDate.getHours();
+        var currentDay = currentDate.getDay(); // Sunday - 0, Monday - 1, etc.
 
-            var subject = null;
+        var subject = null;
 
-            // Example: Math on Mondays at 9 PM
-            if (currentDay === 1 && currentHour === 21) { 
-                subject = "Math";
-            }
-            // Example: Science on Tuesdays at 10 PM
-            else if (currentDay === 2 && currentHour === 22) {
-                subject = "Science";
-            }
-
-            if (subject) {
-                var dateString = currentDate.toISOString().substring(0, 10); // Format as YYYY-MM-DD
-                var timeString = currentDate.toLocaleTimeString(); // Local time
-
-                var testMessage = `Test Attendance - Subject: ${subject}, Date: ${dateString}, Time: ${timeString}`;
-
-                new QRCode(document.getElementById("qrcode"), {
-                    text: testMessage,
-                    width: 128,
-                    height: 128,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-            } else {
-                document.getElementById("qrcode").innerHTML = "No attendance currently available.";
-            }
+        // Example: Math on Mondays at 9 PM
+        if (currentDay === 1 && currentHour === 21) {
+          subject = "Math";
+        }
+        // Example: Science on Tuesdays at 10 PM
+        else if (currentDay === 2 && currentHour === 22) {
+          subject = "Science";
         }
 
-        // Generate the QR code when the page loads
-        generateDynamicQR();
+        if (subject) {
+          var dateString = currentDate.toISOString().substring(0, 10); // Format as YYYY-MM-DD
+          var timeString = currentDate.toLocaleTimeString(); // Local time
+
+          var testMessage = `Test Attendance - Subject: ${subject}, Date: ${dateString}, Time: ${timeString}`;
+
+          new QRCode(document.getElementById("qrcode"), {
+            text: testMessage,
+            width: 128,
+            height: 128,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H,
+          });
+        } else {
+          document.getElementById("qrcode").innerHTML =
+            "No attendance currently available.";
+        }
+      }
+
+      // Generate the QR code when the page loads
+      generateDynamicQR();
     </script>
-</body>
+  </body>
 </html>

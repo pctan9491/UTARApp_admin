@@ -1,157 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Add Timetable</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
 
-<body class="bg-light">
-	<script>
-	function checkOther(value) {
-    const otherInput = document.getElementById('otherFaculty');
-    if (value === 'other') {
-        otherInput.style.display = 'block';
-        otherInput.required = true;
-    } else {
-        otherInput.style.display = 'none';
-        otherInput.required = false;
-    }
-}
-
-	</script>
+  <body class="bg-light">
+    <script>
+      function checkOther(value) {
+        const otherInput = document.getElementById("otherFaculty");
+        if (value === "other") {
+          otherInput.style.display = "block";
+          otherInput.required = true;
+        } else {
+          otherInput.style.display = "none";
+          otherInput.required = false;
+        }
+      }
+    </script>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
     <div class="container mt-5">
-        <h2 class="mb-4">Add Timetable Entry</h2>
+      <h2 class="mb-4">Add Timetable Entry</h2>
 
-        <form id="addTimetableForm">
-            <div class="form-group">
-                <label for="courseCode">Course Code:</label>
-                <input type="text" class="form-control" id="courseCode" name="courseCode" placeholder="Enter course code" required>
-            </div>
+      <form id="addTimetableForm">
+        <div class="form-group">
+          <label for="courseCode">Course Code:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="courseCode"
+            name="courseCode"
+            placeholder="Enter course code"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="courseTitle">Course Title:</label>
-                <input type="text" class="form-control" id="courseTitle" name="courseTitle" placeholder="Enter course title" required>
-            </div>
+        <div class="form-group">
+          <label for="courseTitle">Course Title:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="courseTitle"
+            name="courseTitle"
+            placeholder="Enter course title"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-    <label>Faculty:</label><br>
-    <input type="checkbox" id="FAM" name="faculty" value="FAM">
-    <label for="FAM">FACULTY OF ACCOUNTANCY AND MANAGEMENT</label><br>
-    
-    <input type="checkbox" id="FAS" name="faculty" value="FAS">
-    <label for="FAS">FACULTY OF ARTS AND SOCIAL SCIENCE</label><br>
+        <div class="form-group">
+          <label>Faculty:</label><br />
+          <input type="checkbox" id="FAM" name="faculty" value="FAM" />
+          <label for="FAM">FACULTY OF ACCOUNTANCY AND MANAGEMENT</label><br />
 
-    <input type="checkbox" id="FBF" name="faculty" value="FBF">
-    <label for="FBF">FACULTY OF BUSINESS AND FINANCE</label><br>
+          <input type="checkbox" id="FAS" name="faculty" value="FAS" />
+          <label for="FAS">FACULTY OF ARTS AND SOCIAL SCIENCE</label><br />
 
-    <input type="checkbox" id="FCI" name="faculty" value="FCI">
-    <label for="FCI">FACULTY OF CREATIVE INDUSTRIES</label><br>
+          <input type="checkbox" id="FBF" name="faculty" value="FBF" />
+          <label for="FBF">FACULTY OF BUSINESS AND FINANCE</label><br />
 
-    <input type="checkbox" id="FEGT" name="faculty" value="FEGT">
-    <label for="FEGT">FACULTY OF ENGINEERING AND GREEN TECHNOLOGY</label><br>
+          <input type="checkbox" id="FCI" name="faculty" value="FCI" />
+          <label for="FCI">FACULTY OF CREATIVE INDUSTRIES</label><br />
 
-    <input type="checkbox" id="FICT" name="faculty" value="FICT">
-    <label for="FICT">FACULTY OF INFORMATION AND COMMUNICATION TECHNOLOGY</label><br>
+          <input type="checkbox" id="FEGT" name="faculty" value="FEGT" />
+          <label for="FEGT">FACULTY OF ENGINEERING AND GREEN TECHNOLOGY</label
+          ><br />
 
-    <input type="checkbox" id="FSC" name="faculty" value="FSC">
-    <label for="FSC">FACULTY OF SCIENCE</label><br>
+          <input type="checkbox" id="FICT" name="faculty" value="FICT" />
+          <label for="FICT"
+            >FACULTY OF INFORMATION AND COMMUNICATION TECHNOLOGY</label
+          ><br />
 
-    <input type="checkbox" id="ICS" name="faculty" value="ICS">
-    <label for="ICS">INSTITUTE OF CHINESE STUDIES</label><br>
+          <input type="checkbox" id="FSC" name="faculty" value="FSC" />
+          <label for="FSC">FACULTY OF SCIENCE</label><br />
 
-    <input type="checkbox" id="LKC FES" name="faculty" value="LKC FES">
-    <label for="LKC FES">LEE KONG CHIAN FACULTY OF ENGINEERING AND SCIENCE</label><br>
+          <input type="checkbox" id="ICS" name="faculty" value="ICS" />
+          <label for="ICS">INSTITUTE OF CHINESE STUDIES</label><br />
 
-    <input type="checkbox" id="MK FMHS" name="faculty" value="MK FMHS">
-    <label for="MK FMHS">M. KANDIAH FACULTY OF MEDICINE AND HEALTH SCIENCES</label><br>
+          <input type="checkbox" id="LKC FES" name="faculty" value="LKC FES" />
+          <label for="LKC FES"
+            >LEE KONG CHIAN FACULTY OF ENGINEERING AND SCIENCE</label
+          ><br />
 
-    <input type="checkbox" id="other" name="faculty" value="other" onchange="checkOther(this.value)">
-    <label for="other">Others</label>
-</div>
-<input type="text" class="form-control mt-2" id="otherFaculty" name="otherFaculty" placeholder="Enter other faculty shortkey" style="display: none;">
+          <input type="checkbox" id="MK FMHS" name="faculty" value="MK FMHS" />
+          <label for="MK FMHS"
+            >M. KANDIAH FACULTY OF MEDICINE AND HEALTH SCIENCES</label
+          ><br />
 
-			
-			<div class="form-group">
-    <label>Class Type:</label><br>
-    <input type="checkbox" id="lecture" name="courseType" value="Lecture" checked disabled>
-    <label for="lecture">Lecture</label><br>
+          <input
+            type="checkbox"
+            id="other"
+            name="faculty"
+            value="other"
+            onchange="checkOther(this.value)"
+          />
+          <label for="other">Others</label>
+        </div>
+        <input
+          type="text"
+          class="form-control mt-2"
+          id="otherFaculty"
+          name="otherFaculty"
+          placeholder="Enter other faculty shortkey"
+          style="display: none"
+        />
 
-    <input type="checkbox" id="tutorial" name="courseType" value="Tutorial">
-    <label for="tutorial">Tutorial</label><br>
+        <div class="form-group">
+          <label>Class Type:</label><br />
+          <input
+            type="checkbox"
+            id="lecture"
+            name="courseType"
+            value="Lecture"
+            checked
+            disabled
+          />
+          <label for="lecture">Lecture</label><br />
 
-    <input type="checkbox" id="practical" name="courseType" value="Practical">
-    <label for="practical">Practical</label>
-</div>
+          <input
+            type="checkbox"
+            id="tutorial"
+            name="courseType"
+            value="Tutorial"
+          />
+          <label for="tutorial">Tutorial</label><br />
 
-            <button type="submit" class="btn btn-primary">Add Entry</button>
-        </form>
+          <input
+            type="checkbox"
+            id="practical"
+            name="courseType"
+            value="Practical"
+          />
+          <label for="practical">Practical</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Entry</button>
+      </form>
     </div>
 
     <!-- Include Bootstrap JavaScript and other necessary scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-	<script>
-	       // Initialize Firebase
-        const firebaseConfig = {
-              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-  authDomain: "utarapp-9f3db.firebaseapp.com",
-  projectId: "utarapp-9f3db",
-  storageBucket: "utarapp-9f3db.appspot.com",
-  messagingSenderId: "331019317153",
-  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-		firebase.initializeApp(firebaseConfig);
-		const db = firebase.firestore();
-		
-		document.getElementById('addTimetableForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent the default form submission
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-    // Get the values from the form
-    const courseCode = document.getElementById('courseCode').value;
-    const courseTitle = document.getElementById('courseTitle').value;
-	const selectedTypes = Array.from(document.querySelectorAll('input[name="courseType"]:checked')).map(checkbox => checkbox.value);
-// Inside the form submission event listener:
-const selectedFaculties = Array.from(document.querySelectorAll('input[name="faculty"]:checked')).map(checkbox => checkbox.value);
+      document
+        .getElementById("addTimetableForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault(); // Prevent the default form submission
 
-// If 'other' is selected, use the input value
-if (selectedFaculties.includes('other')) {
-    const otherFacultyValue = document.getElementById('otherFaculty').value;
-    // Add the other faculty value to the selected faculties list
-    selectedFaculties.push(otherFacultyValue);
-    // Remove the 'other' placeholder
-    const index = selectedFaculties.indexOf('other');
-    if (index > -1) {
-        selectedFaculties.splice(index, 1);
-    }
-}
+          // Get the values from the form
+          const courseCode = document.getElementById("courseCode").value;
+          const courseTitle = document.getElementById("courseTitle").value;
+          const selectedTypes = Array.from(
+            document.querySelectorAll('input[name="courseType"]:checked')
+          ).map((checkbox) => checkbox.value);
+          // Inside the form submission event listener:
+          const selectedFaculties = Array.from(
+            document.querySelectorAll('input[name="faculty"]:checked')
+          ).map((checkbox) => checkbox.value);
 
-    // Add the data to Firestore
-    db.collection('course').add({
-        courseCode: courseCode,
-        courseTitle: courseTitle,
-        faculty: selectedFaculties,
-		classTypes: selectedTypes
-    })
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id);
-        alert('Timetable entry added successfully!');
-        // Reset the form
-        document.getElementById('addTimetableForm').reset();
-    })
-    .catch(function(error) {
-        console.error("Error adding document: ", error);
-        alert('Error while adding timetable entry. Please try again.');
-    });
-});
+          // If 'other' is selected, use the input value
+          if (selectedFaculties.includes("other")) {
+            const otherFacultyValue =
+              document.getElementById("otherFaculty").value;
+            // Add the other faculty value to the selected faculties list
+            selectedFaculties.push(otherFacultyValue);
+            // Remove the 'other' placeholder
+            const index = selectedFaculties.indexOf("other");
+            if (index > -1) {
+              selectedFaculties.splice(index, 1);
+            }
+          }
 
-	</script>
-</body>
-
+          // Add the data to Firestore
+          db.collection("course")
+            .add({
+              courseCode: courseCode,
+              courseTitle: courseTitle,
+              faculty: selectedFaculties,
+              classTypes: selectedTypes,
+            })
+            .then(function (docRef) {
+              console.log("Document written with ID: ", docRef.id);
+              alert("Timetable entry added successfully!");
+              // Reset the form
+              document.getElementById("addTimetableForm").reset();
+            })
+            .catch(function (error) {
+              console.error("Error adding document: ", error);
+              alert("Error while adding timetable entry. Please try again.");
+            });
+        });
+    </script>
+  </body>
 </html>

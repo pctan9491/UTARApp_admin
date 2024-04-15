@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Class Attendance Record</title>
-   <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <!-- Include Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -16,88 +19,91 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Custom Styles -->
     <style>
-        body {
-            background-color: #f7f7f7; /* Light grey background */
-        }
-        .class-card {
-            margin-bottom: 2rem; /* Space below the card */
-        }
-        .class-card-header {
-            background-color: #6c757d; /* Bootstrap secondary color */
-            color: #fff; /* White text color */
-        }
-        .class-card-body {
-            background-color: #ffffff; /* White background */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Slight shadow */
-        }
-        .class-info-title {
-            font-size: 1.5rem; /* Larger text for the title */
-            margin-bottom: 0.5rem; /* Space below the title */
-        }
-        .class-info-text {
-            font-size: 1.1rem; /* Slightly larger text for better readability */
-            color: #212529; /* Bootstrap dark color */
-        }
-		 .attendance-yes {
-            background-color: #c3e6cb; /* Green background for attended */
-        }
-        .attendance-no {
-            background-color: #f5c6cb; /* Red background for absent */
-        }
+      body {
+        background-color: #f7f7f7; /* Light grey background */
+      }
+      .class-card {
+        margin-bottom: 2rem; /* Space below the card */
+      }
+      .class-card-header {
+        background-color: #6c757d; /* Bootstrap secondary color */
+        color: #fff; /* White text color */
+      }
+      .class-card-body {
+        background-color: #ffffff; /* White background */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Slight shadow */
+      }
+      .class-info-title {
+        font-size: 1.5rem; /* Larger text for the title */
+        margin-bottom: 0.5rem; /* Space below the title */
+      }
+      .class-info-text {
+        font-size: 1.1rem; /* Slightly larger text for better readability */
+        color: #212529; /* Bootstrap dark color */
+      }
+      .attendance-yes {
+        background-color: #c3e6cb; /* Green background for attended */
+      }
+      .attendance-no {
+        background-color: #f5c6cb; /* Red background for absent */
+      }
     </style>
-</head>
-<body>
- <div class="container mt-5">
-    <div class="card class-card">
-        <div class="card-header class-card-header">
-            Class Information
-        </div>
+  </head>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
+    <div class="container mt-5">
+      <div class="card class-card">
+        <div class="card-header class-card-header">Class Information</div>
         <div class="card-body class-card-body" id="classInfo">
-            <!-- Class information will be displayed here -->
+          <!-- Class information will be displayed here -->
         </div>
-    </div>
-    <div class="table-responsive">
+      </div>
+      <div class="table-responsive">
         <table class="table table-hover table-custom">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Student ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Course</th>
-                    <th scope="col">Scan Time</th>
-					<th scope="col">Add/ Delete</th>
-                </tr>
-            </thead>
-            <tbody id="studentList">
-                <!-- Student attendance records will be listed here -->
-            </tbody>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Student ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Course</th>
+              <th scope="col">Scan Time</th>
+              <th scope="col">Add/ Delete</th>
+            </tr>
+          </thead>
+          <tbody id="studentList">
+            <!-- Student attendance records will be listed here -->
+          </tbody>
         </table>
+      </div>
     </div>
-</div>
 
     <script>
-        const firebaseConfig = {
-              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-  authDomain: "utarapp-9f3db.firebaseapp.com",
-  authDomain: "pctan9491.github.io",
-  projectId: "utarapp-9f3db",
-  storageBucket: "utarapp-9f3db.appspot.com",
-  messagingSenderId: "331019317153",
-  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-        firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const urlParams = new URLSearchParams(window.location.search);
-        const date = urlParams.get('date');
-        const subject = urlParams.get('subject');
-        const classType = urlParams.get('classType');
-        const startTime = urlParams.get('startTime');
-        const venue = urlParams.get('venue');
-		
-	const day = getDayFromDate(date);
-	// Display class information in the header
-    const classInfoDiv = document.getElementById('classInfo');
-    classInfoDiv.innerHTML = `
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        authDomain: "pctan9491.github.io",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const urlParams = new URLSearchParams(window.location.search);
+      const date = urlParams.get("date");
+      const subject = urlParams.get("subject");
+      const classType = urlParams.get("classType");
+      const startTime = urlParams.get("startTime");
+      const venue = urlParams.get("venue");
+
+      const day = getDayFromDate(date);
+      // Display class information in the header
+      const classInfoDiv = document.getElementById("classInfo");
+      classInfoDiv.innerHTML = `
         <div class="class-info-title">Class Information</div>
         <div class="class-info-text"><strong>Subject:</strong> ${subject}</div>
         <div class="class-info-text"><strong>Type:</strong> ${classType}</div>
@@ -106,38 +112,97 @@ const urlParams = new URLSearchParams(window.location.search);
         <div class="class-info-text"><strong>Date:</strong> ${date}</div>
         <div class="class-info-text"><strong>Day:</strong> ${day}</div>
     `;
-	function refreshStudentList() {	
-     db.collection('timetable')
-        .where('course', '==', subject)
-        .where('classType', '==', classType)
-        .where('startTime', '==', startTime)
-        .where('day', '==', day)
-        .where('venue', '==', venue)
-        .where('approved', '==', true)
-        .get()
-        .then(querySnapshot => {
-            querySnapshot.forEach(doc => {
+      function refreshStudentList() {
+        const loggedInLecturerId = localStorage.getItem("saveLoginID");
+
+        // Check for regular timetable
+        db.collection("timetable")
+          .where("course", "==", subject)
+          .where("classType", "==", classType)
+          .where("startTime", "==", startTime)
+          .where("day", "==", day)
+          .where("venue", "==", venue)
+          .where("approved", "==", true)
+          .where("lecturerTutor", "==", loggedInLecturerId)
+          .get()
+          .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+              querySnapshot.forEach((doc) => {
                 const timetableData = doc.data();
-                const studentList = document.getElementById('studentList');
-                studentList.innerHTML = ''; // Clear existing list
+                displayStudentList(timetableData.studRegister);
+              });
+            } else {
+              // Check for replacement class
+              db.collection("replacement")
+                .where("approved", "==", true)
+                .where("courseCode", "==", subject)
+                .where("date", "==", date)
+                .where("startTime", "==", startTime)
+                .where("venue", "==", venue)
+                .get()
+                .then((replacementSnapshot) => {
+                  if (!replacementSnapshot.empty) {
+                    replacementSnapshot.forEach((replacementDoc) => {
+                      const replacementData = replacementDoc.data();
+                      const timetableId = replacementData.timetableId;
 
-                timetableData.studRegister.forEach((studentId, index) => {
-                    fetchStudentInfo(studentId, index + 1); // Pass the timetable document ID as well
+                      // Fetch the corresponding timetable document to get studRegister
+                      db.collection("timetable")
+                        .doc(timetableId)
+                        .get()
+                        .then((timetableDoc) => {
+                          if (timetableDoc.exists) {
+                            const timetableData = timetableDoc.data();
+                            displayStudentList(timetableData.studRegister);
+                          } else {
+                            console.error(
+                              "Error fetching timetable document for replacement class"
+                            );
+                          }
+                        })
+                        .catch((error) => {
+                          console.error(
+                            "Error fetching timetable document for replacement class:",
+                            error
+                          );
+                        });
+                    });
+                  } else {
+                    console.log(
+                      "No matching timetable or replacement class found."
+                    );
+                    // Handle case when no documents are found
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error getting replacement documents: ", error);
                 });
-            });
-        })
-        .catch(error => {
+            }
+          })
+          .catch((error) => {
             console.error("Error getting timetable documents: ", error);
-        });
-		}
+          });
+      }
 
-function fetchStudentInfo(studentId, index) {
-    db.collection('student').where('studentID', '==', studentId).get().then(studentSnapshot => {
-        if (!studentSnapshot.empty) {
-            studentSnapshot.forEach(studentDoc => {
+      function displayStudentList(studRegister) {
+        const studentList = document.getElementById("studentList");
+        studentList.innerHTML = ""; // Clear existing list
+
+        studRegister.forEach((studentId, index) => {
+          fetchStudentInfo(studentId, index + 1);
+        });
+      }
+
+      function fetchStudentInfo(studentId, index) {
+        db.collection("student")
+          .where("studentID", "==", studentId)
+          .get()
+          .then((studentSnapshot) => {
+            if (!studentSnapshot.empty) {
+              studentSnapshot.forEach((studentDoc) => {
                 const studentData = studentDoc.data();
                 // Append student info to the table
-                const studentList = document.getElementById('studentList');
+                const studentList = document.getElementById("studentList");
                 const row = studentList.insertRow();
                 row.innerHTML = `
                     <th scope="row">${index}</th>
@@ -148,130 +213,159 @@ function fetchStudentInfo(studentId, index) {
 					<td></td> <!-- Placeholder for Add/Delete buttons -->
                 `;
                 checkAttendance(studentId, row);
-            });
-        } else {
-            console.error("No student found with the given ID: ", studentId);
-        }
-    }).catch(error => {
-        console.error("Error getting student documents: ", error);
-    });
-}
-
-function checkAttendance(studentId, row) {
-    db.collection('qr_class_info').where('subject', '==', subject)
-        .where('classType', '==', classType)
-        .where('startTime', '==', startTime)
-        .where('venue', '==', venue)
-        .where('date', '==', date)
-        .get()
-        .then(querySnapshot => {
-            if (querySnapshot.empty) {
-                console.log("No matching documents found.");
-                // Handle case when no documents are found, e.g., display a message or a generic "Add" button.
-                row.cells[4].textContent = 'Absent'; // Assuming the 5th cell is for scan time
-                // Potential logic to allow adding a new attendance record if none exists
+              });
             } else {
-                querySnapshot.forEach(doc => {
-                    const docId = doc.id; // Now you have docId
-                    const attendanceRecords = doc.data().attendanceRecords || [];
-                    const attendanceRecord = attendanceRecords.find(record => record.studId === studentId);
-                    let attended = false;
-                    let scanTime = 'Absent';
-
-                    if (attendanceRecord) {
-                        attended = true;
-                        scanTime = attendanceRecord.scanTime || 'Present';
-                    }
-
-                    row.cells[4].textContent = scanTime; // Update scan time
-                    row.classList.add(attended ? 'attendance-yes' : 'attendance-no');
-
-                    // Update the action button based on attendance status
-                    if (attended) {
-                        row.cells[5].innerHTML = `<button class="btn btn-danger btn-sm" onclick="deleteAttendance('${studentId}', '${docId}', this)">Delete</button>`;
-                    } else {
-                        row.cells[5].innerHTML = `<button class="btn btn-success btn-sm" onclick="addAttendance('${studentId}', '${docId}', this)">Add</button>`;
-                    }
-                });
+              console.error("No student found with the given ID: ", studentId);
             }
-        })
-        .catch(error => {
+          })
+          .catch((error) => {
+            console.error("Error getting student documents: ", error);
+          });
+      }
+
+      function checkAttendance(studentId, row) {
+        db.collection("qr_class_info")
+          .where("subject", "==", subject)
+          .where("classType", "==", classType)
+          .where("startTime", "==", startTime)
+          .where("venue", "==", venue)
+          .where("date", "==", date)
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+              console.log("No matching documents found.");
+              // Handle case when no documents are found, e.g., display a message or a generic "Add" button.
+              row.cells[4].textContent = "Absent"; // Assuming the 5th cell is for scan time
+              // Potential logic to allow adding a new attendance record if none exists
+            } else {
+              querySnapshot.forEach((doc) => {
+                const docId = doc.id; // Now you have docId
+                const attendanceRecords = doc.data().attendanceRecords || [];
+                const attendanceRecord = attendanceRecords.find(
+                  (record) => record.studId === studentId
+                );
+                let attended = false;
+                let scanTime = "Absent";
+
+                if (attendanceRecord) {
+                  attended = true;
+                  scanTime = attendanceRecord.scanTime || "Present";
+                }
+
+                row.cells[4].textContent = scanTime; // Update scan time
+                row.classList.add(
+                  attended ? "attendance-yes" : "attendance-no"
+                );
+
+                // Update the action button based on attendance status
+                if (attended) {
+                  row.cells[5].innerHTML = `<button class="btn btn-danger btn-sm" onclick="deleteAttendance('${studentId}', '${docId}', this)">Delete</button>`;
+                } else {
+                  row.cells[5].innerHTML = `<button class="btn btn-success btn-sm" onclick="addAttendance('${studentId}', '${docId}', this)">Add</button>`;
+                }
+              });
+            }
+          })
+          .catch((error) => {
             console.error("Error getting attendance records: ", error);
-        });
-}
+          });
+      }
 
-
-
-		
-				// Function to convert date string to day of the week if necessary
-    function getDayFromDate(dateString) {
+      // Function to convert date string to day of the week if necessary
+      function getDayFromDate(dateString) {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { weekday: 'long' });
-    }
-	
-function deleteAttendance(studentId, docId, buttonElement) {
-    const classInfoRef = db.collection('qr_class_info').doc(docId);
+        return date.toLocaleDateString("en-US", { weekday: "long" });
+      }
 
-    classInfoRef.get().then(doc => {
-        if (!doc.exists) {
-            console.log("No such document!");
-            return;
-        }
-        const data = doc.data();
-        let attendanceRecords = data.attendanceRecords || [];
-        const recordIndex = attendanceRecords.findIndex(record => record.studId === studentId);
+      function deleteAttendance(studentId, docId, buttonElement) {
+        const classInfoRef = db.collection("qr_class_info").doc(docId);
 
-        // If the student is found in the attendanceRecords, remove them
-        if (recordIndex !== -1) {
-            attendanceRecords.splice(recordIndex, 1);
+        classInfoRef
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              console.log("No such document!");
+              return;
+            }
+            const data = doc.data();
+            let attendanceRecords = data.attendanceRecords || [];
+            const recordIndex = attendanceRecords.findIndex(
+              (record) => record.studId === studentId
+            );
 
-            classInfoRef.update({ attendanceRecords })
+            // If the student is found in the attendanceRecords, remove them
+            if (recordIndex !== -1) {
+              attendanceRecords.splice(recordIndex, 1);
+
+              classInfoRef
+                .update({ attendanceRecords })
                 .then(() => {
-                    console.log("Document successfully updated to remove attendance record!");
-                    alert("Attendance record deleted successfully."); // Inform user
-					refreshStudentList();
+                  console.log(
+                    "Document successfully updated to remove attendance record!"
+                  );
+                  alert("Attendance record deleted successfully."); // Inform user
+                  refreshStudentList();
                 })
-                .catch(error => console.error("Error updating document: ", error));
-        }
-    }).catch(error => console.error("Error getting document:", error));
-}
+                .catch((error) =>
+                  console.error("Error updating document: ", error)
+                );
+            }
+          })
+          .catch((error) => console.error("Error getting document:", error));
+      }
 
+      function addAttendance(studentId, docId, buttonElement) {
+        const classInfoRef = db.collection("qr_class_info").doc(docId);
 
+        classInfoRef
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              console.log("No such document!");
+              return;
+            }
+            const data = doc.data();
+            let attendanceRecords = data.attendanceRecords || [];
+            const recordIndex = attendanceRecords.findIndex(
+              (record) => record.studId === studentId
+            );
 
-function addAttendance(studentId, docId, buttonElement) {
-    const classInfoRef = db.collection('qr_class_info').doc(docId);
+            // If the student is not already in the attendanceRecords, add them
+            if (recordIndex === -1) {
+              const newRecord = {
+                studId: studentId,
+                scanTime: formatDate(new Date()),
+                longitude: null,
+                latitude: null,
+              };
+              attendanceRecords.push(newRecord);
 
-    classInfoRef.get().then(doc => {
-        if (!doc.exists) {
-            console.log("No such document!");
-            return;
-        }
-        const data = doc.data();
-        let attendanceRecords = data.attendanceRecords || [];
-        const recordIndex = attendanceRecords.findIndex(record => record.studId === studentId);
-
-        // If the student is not already in the attendanceRecords, add them
-        if (recordIndex === -1) {
-            const newRecord = { studId: studentId, scanTime: formatDate(new Date()), longitude: null, latitude: null };
-            attendanceRecords.push(newRecord);
-
-            classInfoRef.update({ attendanceRecords })
+              classInfoRef
+                .update({ attendanceRecords })
                 .then(() => {
-                    console.log("Document successfully updated with new attendance record!");
-                    alert("Attendance record added successfully."); // Inform user
-					refreshStudentList();
+                  console.log(
+                    "Document successfully updated with new attendance record!"
+                  );
+                  alert("Attendance record added successfully."); // Inform user
+                  refreshStudentList();
                 })
-                .catch(error => console.error("Error updating document: ", error));
-        }
-    }).catch(error => console.error("Error getting document:", error));
-}
-function formatDate(date) {
-    const pad = (num) => num.toString().padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-}
+                .catch((error) =>
+                  console.error("Error updating document: ", error)
+                );
+            }
+          })
+          .catch((error) => console.error("Error getting document:", error));
+      }
+      function formatDate(date) {
+        const pad = (num) => num.toString().padStart(2, "0");
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+          date.getDate()
+        )} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+          date.getSeconds()
+        )}`;
+      }
 
-refreshStudentList();
-
+      refreshStudentList();
     </script>
-</body>
+  </body>
 </html>

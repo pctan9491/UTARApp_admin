@@ -1,78 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Site - Class Management</title>
     <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
-
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Class Management</h2>
-    <h4>Select a Class for Management:</h4>
-    <div id="timetableList"></div>
-</div>
-
-<!-- Replacement Modal -->
-<div class="modal fade" id="replacementModal" tabindex="-1" role="dialog" aria-labelledby="replacementModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="replacementModalLabel">Class Replacement</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form fields for replacement -->
-                <label for="replacementDate">Replacement Date:</label>
-                <input type="date" id="replacementDate" class="form-control mb-3">
-                <label for="course">Course:</label>
-                <select id="course" class="form-control mb-3"></select>
-                <label for="startTime">Start Time:</label>
-                <input type="time" id="startTime" class="form-control mb-3">
-                <label for="endTime">End Time:</label>
-                <input type="time" id="endTime" class="form-control mb-3">
-                <label for="venue">Venue:</label>
-                <select id="venue" class="form-control mb-3"></select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="saveChangesButton" class="btn btn-primary">Save changes</button>
-
-            </div>
-        </div>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
+    <div class="container mt-5">
+      <h2 class="text-center mb-4">Class Management</h2>
+      <h4>Select a Class for Management:</h4>
+      <div id="timetableList"></div>
     </div>
-</div>
 
-<!-- Cancellation Modal -->
-<div class="modal fade" id="cancellationModal" tabindex="-1" role="dialog" aria-labelledby="cancellationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <!-- Replacement Modal -->
+    <div
+      class="modal fade"
+      id="replacementModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="replacementModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancellationModalLabel">Class Cancellation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form fields for cancellation -->
-                <label for="cancellationDate">Select Date for Cancellation:</label>
-                <select id="cancellationDate" class="form-control mb-3"></select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="saveCancellationButton" class="btn btn-danger">Confirm Cancellation</button>
-            </div>
+          <div class="modal-header">
+            <h5 class="modal-title" id="replacementModalLabel">
+              Class Replacement
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Form fields for replacement -->
+            <label for="replacementDate">Replacement Date:</label>
+            <input type="date" id="replacementDate" class="form-control mb-3" />
+            <label for="course">Course:</label>
+            <select id="course" class="form-control mb-3"></select>
+            <label for="startTime">Start Time:</label>
+            <input type="time" id="startTime" class="form-control mb-3" />
+            <label for="endTime">End Time:</label>
+            <input type="time" id="endTime" class="form-control mb-3" />
+            <label for="venue">Venue:</label>
+            <select id="venue" class="form-control mb-3"></select>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              id="saveChangesButton"
+              class="btn btn-primary"
+            >
+              Save changes
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-
+    <!-- Cancellation Modal -->
+    <div
+      class="modal fade"
+      id="cancellationModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="cancellationModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancellationModalLabel">
+              Class Cancellation
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Form fields for cancellation -->
+            <label for="cancellationDate">Select Date for Cancellation:</label>
+            <select id="cancellationDate" class="form-control mb-3"></select>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              id="saveCancellationButton"
+              class="btn btn-danger"
+            >
+              Confirm Cancellation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- External Libraries and Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -83,51 +138,58 @@
 
     <!-- Inline JavaScript -->
     <script>
-        // Firebase Initialization
-        const firebaseConfig = {
-            apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-            authDomain: "utarapp-9f3db.firebaseapp.com",
-            projectId: "utarapp-9f3db",
-            storageBucket: "utarapp-9f3db.appspot.com",
-            messagingSenderId: "331019317153",
-            appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+      // Firebase Initialization
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-        // Fetch classes and populate
-        async function fetchClassesAndPopulate() {
-            const loggedInLecturerId = localStorage.getItem('saveLoginID');
-            try {
-                const querySnapshot = await db.collection("timetable").where("lecturerTutor", "==", loggedInLecturerId).where('approved', '==', true).get();
-                let classItems = '';
-                for (let doc of querySnapshot.docs) {
-                    const classData = doc.data();
-                    const courseName = await getCourseName(classData.course);
-                    classItems += generateClassItemHTML(courseName, classData, doc.id);
-                }
-                document.getElementById('timetableList').innerHTML = classItems;
-                attachEventListeners();  // Attach event listeners after rendering
-            } catch (error) {
-                console.error("Error fetching classes: ", error);
-            }
+      // Fetch classes and populate
+      async function fetchClassesAndPopulate() {
+        const loggedInLecturerId = localStorage.getItem("saveLoginID");
+        try {
+          const querySnapshot = await db
+            .collection("timetable")
+            .where("lecturerTutor", "==", loggedInLecturerId)
+            .where("approved", "==", true)
+            .get();
+          let classItems = "";
+          for (let doc of querySnapshot.docs) {
+            const classData = doc.data();
+            const courseName = await getCourseName(classData.course);
+            classItems += generateClassItemHTML(courseName, classData, doc.id);
+          }
+          document.getElementById("timetableList").innerHTML = classItems;
+          attachEventListeners(); // Attach event listeners after rendering
+        } catch (error) {
+          console.error("Error fetching classes: ", error);
         }
+      }
 
-        async function getCourseName(courseCode) {
-            try {
-                const courseQuerySnapshot = await db.collection("course").where("courseCode", "==", courseCode).get();
-                if (!courseQuerySnapshot.empty) {
-                    return courseQuerySnapshot.docs[0].data().courseTitle;
-                }
-                return null;
-            } catch (error) {
-                console.error("Error fetching course name: ", error);
-                return null;
-            }
+      async function getCourseName(courseCode) {
+        try {
+          const courseQuerySnapshot = await db
+            .collection("course")
+            .where("courseCode", "==", courseCode)
+            .get();
+          if (!courseQuerySnapshot.empty) {
+            return courseQuerySnapshot.docs[0].data().courseTitle;
+          }
+          return null;
+        } catch (error) {
+          console.error("Error fetching course name: ", error);
+          return null;
         }
+      }
 
-        function generateClassItemHTML(courseName, classData, docId) {
-            return `
+      function generateClassItemHTML(courseName, classData, docId) {
+        return `
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">${courseName}</h5>
@@ -138,254 +200,292 @@
                     </div>
                 </div>
             `;
+      }
+
+      function attachEventListeners() {
+        const allReplacementButtons =
+          document.querySelectorAll(".replacementBtn");
+        const allCancellationButtons =
+          document.querySelectorAll(".cancellationBtn");
+        allReplacementButtons.forEach((button) =>
+          button.addEventListener("click", handleReplacementClick)
+        );
+        allCancellationButtons.forEach((button) =>
+          button.addEventListener("click", handleCancellationClick)
+        );
+      }
+
+      function toggleActionFields() {
+        const action = document.getElementById("action").value;
+
+        if (action === "replacement") {
+          document.getElementById("replacementFields").style.display = "";
+          document.getElementById("cancellationFields").style.display = "none";
+        } else if (action === "cancellation") {
+          document.getElementById("cancellationFields").style.display = "";
+          document.getElementById("replacementFields").style.display = "none";
+        }
+      }
+
+      async function displayManagementForm(action, classId) {
+        if (action === "replacement") {
+          await populateCourseDropdownForUser(classId); // New function
+          await populateVenuesDropdownForClassType(classId);
+          document
+            .getElementById("replacementModal")
+            .setAttribute("data-timetable-id", classId);
+          $("#replacementModal").modal("show");
+        }
+        // If you have a cancellation modal:
+        // else if (action === 'cancellation') {
+        //     $('#cancellationModal').modal('show');
+        // }
+      }
+
+      function handleReplacementClick(event) {
+        const classId = event.target.dataset.id;
+        displayManagementForm("replacement", classId);
+      }
+
+      function handleCancellationClick(event) {
+        const classId = event.target.dataset.id;
+        displayCancellationForm(classId);
+      }
+
+      async function populateCourseDropdownForUser(classId) {
+        const courseDropdown = document.getElementById("course");
+        courseDropdown.innerHTML = ""; // Clear existing options
+
+        const doc = await db.collection("timetable").doc(classId).get();
+        const classData = doc.data();
+        const courseCode = classData.course;
+
+        const courseQuerySnapshot = await db
+          .collection("course")
+          .where("courseCode", "==", courseCode)
+          .get();
+        courseQuerySnapshot.forEach((doc) => {
+          let option = document.createElement("option");
+          option.value = doc.data().courseCode;
+          option.textContent = doc.data().courseTitle;
+          courseDropdown.appendChild(option);
+        });
+      }
+
+      async function populateVenuesDropdownForClassType(classId) {
+        const venueDropdown = document.getElementById("venue");
+        venueDropdown.innerHTML = ""; // Clear existing options
+
+        // Retrieve the classType from the class with classId
+        const doc = await db.collection("timetable").doc(classId).get();
+        const classType = doc.data().classType;
+
+        // Get locations with matching classTypes
+        const querySnapshot = await db
+          .collection("location")
+          .where("classTypes", "array-contains", classType)
+          .get();
+        querySnapshot.forEach((doc) => {
+          let option = document.createElement("option");
+          option.value = doc.data().venue;
+          option.textContent = doc.data().venue;
+          venueDropdown.appendChild(option);
+        });
+      }
+
+      async function saveReplacementDetails() {
+        const startTime = document.getElementById("startTime").value;
+        const endTime = document.getElementById("endTime").value;
+        const date = document.getElementById("replacementDate").value;
+        const courseDropdown = document.getElementById("course");
+        const courseCode =
+          courseDropdown.options[courseDropdown.selectedIndex].value;
+        const courseName =
+          courseDropdown.options[courseDropdown.selectedIndex].textContent;
+        const venueDropdown = document.getElementById("venue");
+        const venue = venueDropdown.options[venueDropdown.selectedIndex].value;
+        const timetableId = document
+          .getElementById("replacementModal")
+          .getAttribute("data-timetable-id");
+
+        const hasClash = await checkForTimeVenueClashes(
+          startTime,
+          endTime,
+          venue,
+          date
+        );
+        if (hasClash) {
+          alert(
+            "There is a clash with another class or replacement. Please choose a different time or venue."
+          );
+          return;
         }
 
-        function attachEventListeners() {
-            const allReplacementButtons = document.querySelectorAll('.replacementBtn');
-            const allCancellationButtons = document.querySelectorAll('.cancellationBtn');
-            allReplacementButtons.forEach(button => button.addEventListener('click', handleReplacementClick));
-            allCancellationButtons.forEach(button => button.addEventListener('click', handleCancellationClick));
+        const replacementData = {
+          courseCode: courseCode,
+          courseName: courseName,
+          startTime: startTime,
+          endTime: endTime,
+          date: date,
+          venue: venue,
+          timetableId: timetableId,
+          approved: false,
+          rejection: false,
+        };
+
+        try {
+          await db.collection("replacement").add(replacementData);
+          alert("Replacement details saved successfully!");
+          $("#replacementModal").modal("hide");
+        } catch (error) {
+          console.error("Error saving replacement details: ", error);
+          alert("Error saving replacement details. Please try again.");
         }
+      }
 
-function toggleActionFields() {
-    const action = document.getElementById('action').value;
+      async function checkForTimeVenueClashes(startTime, endTime, venue, date) {
+        try {
+          // Convert date to day of the week
+          const dateObj = new Date(date);
+          const days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ];
+          const dayOfWeek = days[dateObj.getDay()];
 
-    if (action === 'replacement') {
-        document.getElementById('replacementFields').style.display = '';
-        document.getElementById('cancellationFields').style.display = 'none';
-    } else if (action === 'cancellation') {
-        document.getElementById('cancellationFields').style.display = '';
-        document.getElementById('replacementFields').style.display = 'none';
-    }
-}
-
-async function displayManagementForm(action, classId) {
-    if (action === 'replacement') {
-	 await populateCourseDropdownForUser(classId);  // New function
-        await populateVenuesDropdownForClassType(classId);
-		document.getElementById('replacementModal').setAttribute('data-timetable-id', classId);
-        $('#replacementModal').modal('show');
-    }
-    // If you have a cancellation modal:
-    // else if (action === 'cancellation') {
-    //     $('#cancellationModal').modal('show');
-    // }
-}
-
-
-function handleReplacementClick(event) {
-    const classId = event.target.dataset.id;
-    displayManagementForm('replacement', classId);
-}
-
-function handleCancellationClick(event) {
-    const classId = event.target.dataset.id;
-     displayCancellationForm(classId);
-}
-
-async function populateCourseDropdownForUser(classId) {
-    const courseDropdown = document.getElementById('course');
-    courseDropdown.innerHTML = '';  // Clear existing options
-
-    const doc = await db.collection("timetable").doc(classId).get();
-    const classData = doc.data();
-    const courseCode = classData.course;
-
-    const courseQuerySnapshot = await db.collection("course").where("courseCode", "==", courseCode).get();
-    courseQuerySnapshot.forEach((doc) => {
-        let option = document.createElement('option');
-        option.value = doc.data().courseCode;
-        option.textContent = doc.data().courseTitle;
-        courseDropdown.appendChild(option);
-    });
-}
-
-async function populateVenuesDropdownForClassType(classId) {
-    const venueDropdown = document.getElementById('venue');
-    venueDropdown.innerHTML = '';  // Clear existing options
-    
-    // Retrieve the classType from the class with classId
-    const doc = await db.collection("timetable").doc(classId).get();
-    const classType = doc.data().classType;
-    
-    // Get locations with matching classTypes
-    const querySnapshot = await db.collection("location").where("classTypes", "array-contains", classType).get();
-    querySnapshot.forEach((doc) => {
-        let option = document.createElement('option');
-        option.value = doc.data().venue;
-        option.textContent = doc.data().venue;
-        venueDropdown.appendChild(option);
-    });
-}
-
-async function saveReplacementDetails() {
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
-    const date = document.getElementById('replacementDate').value;
-    const courseDropdown = document.getElementById('course');
-    const courseCode = courseDropdown.options[courseDropdown.selectedIndex].value;
-    const courseName = courseDropdown.options[courseDropdown.selectedIndex].textContent;
-    const venueDropdown = document.getElementById('venue');
-    const venue = venueDropdown.options[venueDropdown.selectedIndex].value;
-    const timetableId = document.getElementById('replacementModal').getAttribute('data-timetable-id');
-
-    const hasClash = await checkForTimeVenueClashes(startTime, endTime, venue, date);
-    if (hasClash) {
-        alert('There is a clash with another class or replacement. Please choose a different time or venue.');
-        return;
-    }
-
-    const replacementData = {
-        courseCode: courseCode,
-        courseName: courseName,
-        startTime: startTime,
-        endTime: endTime,
-        date: date,
-        venue: venue,
-        timetableId: timetableId,
-        approved: false,
-		rejection: false
-    };
-
-    try {
-        await db.collection('replacement').add(replacementData);
-        alert('Replacement details saved successfully!');
-        $('#replacementModal').modal('hide');
-    } catch (error) {
-        console.error('Error saving replacement details: ', error);
-        alert('Error saving replacement details. Please try again.');
-    }
-}
-
-async function checkForTimeVenueClashes(startTime, endTime, venue, date) {
-    try {
-        // Convert date to day of the week
-        const dateObj = new Date(date);
-        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const dayOfWeek = days[dateObj.getDay()];
-
-        // Check in 'timetable' collection for classes starting in our time slot
-        const startClashSnapshotTimetable = await db.collection("timetable")
+          // Check in 'timetable' collection for classes starting in our time slot
+          const startClashSnapshotTimetable = await db
+            .collection("timetable")
             .where("startTime", ">=", startTime)
             .where("startTime", "<=", endTime)
             .where("venue", "==", venue)
             .where("day", "==", dayOfWeek)
             .get();
 
-        if (!startClashSnapshotTimetable.empty) {
+          if (!startClashSnapshotTimetable.empty) {
             return true; // Clash exists
-        }
+          }
 
-        // Check in 'timetable' collection for classes ending in our time slot
-        const endClashSnapshotTimetable = await db.collection("timetable")
+          // Check in 'timetable' collection for classes ending in our time slot
+          const endClashSnapshotTimetable = await db
+            .collection("timetable")
             .where("endTime", ">=", startTime)
             .where("endTime", "<=", endTime)
             .where("venue", "==", venue)
             .where("day", "==", dayOfWeek)
             .get();
 
-        if (!endClashSnapshotTimetable.empty) {
+          if (!endClashSnapshotTimetable.empty) {
             return true; // Clash exists
-        }
+          }
 
-        // Check in 'replacement' collection for replacements starting in our time slot
-        const startClashSnapshotReplacement = await db.collection("replacement")
+          // Check in 'replacement' collection for replacements starting in our time slot
+          const startClashSnapshotReplacement = await db
+            .collection("replacement")
             .where("startTime", ">=", startTime)
             .where("startTime", "<=", endTime)
             .where("venue", "==", venue)
             .where("date", "==", date)
             .get();
 
-        if (!startClashSnapshotReplacement.empty) {
+          if (!startClashSnapshotReplacement.empty) {
             return true; // Clash exists
-        }
+          }
 
-        // Check in 'replacement' collection for replacements ending in our time slot
-        const endClashSnapshotReplacement = await db.collection("replacement")
+          // Check in 'replacement' collection for replacements ending in our time slot
+          const endClashSnapshotReplacement = await db
+            .collection("replacement")
             .where("endTime", ">=", startTime)
             .where("endTime", "<=", endTime)
             .where("venue", "==", venue)
             .where("date", "==", date)
             .get();
 
-        if (!endClashSnapshotReplacement.empty) {
+          if (!endClashSnapshotReplacement.empty) {
             return true; // Clash exists
-        }
+          }
 
-        return false; // No clashes
-    } catch (error) {
-        console.error("Error checking for time and venue clashes: ", error);
-        return true; // Assume clash exists to be on the safe side
-    }
-}
-function getUpcomingDatesForDay(day, count=4) {
-    const dates = [];
-    const currentDate = new Date();
-    
-    while (dates.length < count) {
-        if (currentDate.toLocaleDateString('en-US', { weekday: 'long' }) === day) {
+          return false; // No clashes
+        } catch (error) {
+          console.error("Error checking for time and venue clashes: ", error);
+          return true; // Assume clash exists to be on the safe side
+        }
+      }
+      function getUpcomingDatesForDay(day, count = 4) {
+        const dates = [];
+        const currentDate = new Date();
+
+        while (dates.length < count) {
+          if (
+            currentDate.toLocaleDateString("en-US", { weekday: "long" }) === day
+          ) {
             dates.push(new Date(currentDate));
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
         }
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
-    
-    return dates;
-}
 
-async function displayCancellationForm(classId) {
-    const doc = await db.collection("timetable").doc(classId).get();
-    const day = doc.data().day;
-    const upcomingDates = getUpcomingDatesForDay(day);
+        return dates;
+      }
 
-    const dateDropdown = document.getElementById('cancellationDate');
-    dateDropdown.innerHTML = ''; // Clear existing options
-    
-    upcomingDates.forEach(date => {
-        let option = document.createElement('option');
-        option.value = date.toISOString().split('T')[0]; // YYYY-MM-DD format
-        option.textContent = date.toLocaleDateString();
-        dateDropdown.appendChild(option);
-    });
+      async function displayCancellationForm(classId) {
+        const doc = await db.collection("timetable").doc(classId).get();
+        const day = doc.data().day;
+        const upcomingDates = getUpcomingDatesForDay(day);
 
-document.getElementById('cancellationModal').setAttribute('data-timetable-id', classId);
-    // Show the cancellation modal
-    $('#cancellationModal').modal('show');
-}
+        const dateDropdown = document.getElementById("cancellationDate");
+        dateDropdown.innerHTML = ""; // Clear existing options
 
-async function saveCancellationDetails() {
-    const selectedDate = document.getElementById('cancellationDate').value;
-    const timetableId = document.getElementById('cancellationModal').getAttribute('data-timetable-id');
+        upcomingDates.forEach((date) => {
+          let option = document.createElement("option");
+          option.value = date.toISOString().split("T")[0]; // YYYY-MM-DD format
+          option.textContent = date.toLocaleDateString();
+          dateDropdown.appendChild(option);
+        });
 
-    const cancellationData = {
-        date: selectedDate,
-        timetableId: timetableId,
-        approved: false,
-		rejection: false
-    };
+        document
+          .getElementById("cancellationModal")
+          .setAttribute("data-timetable-id", classId);
+        // Show the cancellation modal
+        $("#cancellationModal").modal("show");
+      }
 
-    try {
-        await db.collection('cancellation').add(cancellationData);
-        alert('Cancellation details saved successfully. Awaiting approval.');
-        $('#cancellationModal').modal('hide');
-    } catch (error) {
-        console.error('Error saving cancellation details: ', error);
-        alert('Error saving cancellation details. Please try again.');
-    }
-}
+      async function saveCancellationDetails() {
+        const selectedDate = document.getElementById("cancellationDate").value;
+        const timetableId = document
+          .getElementById("cancellationModal")
+          .getAttribute("data-timetable-id");
 
+        const cancellationData = {
+          date: selectedDate,
+          timetableId: timetableId,
+          approved: false,
+          rejection: false,
+        };
 
+        try {
+          await db.collection("cancellation").add(cancellationData);
+          alert("Cancellation details saved successfully. Awaiting approval.");
+          $("#cancellationModal").modal("hide");
+        } catch (error) {
+          console.error("Error saving cancellation details: ", error);
+          alert("Error saving cancellation details. Please try again.");
+        }
+      }
 
+      document
+        .querySelector("#saveChangesButton")
+        .addEventListener("click", saveReplacementDetails);
+      document
+        .querySelector("#saveCancellationButton")
+        .addEventListener("click", saveCancellationDetails);
 
-
-
-
-    document.querySelector('#saveChangesButton').addEventListener('click', saveReplacementDetails);
-	document.querySelector('#saveCancellationButton').addEventListener('click', saveCancellationDetails);
-	
-
-        // Call functions on page load
-        fetchClassesAndPopulate();
+      // Call functions on page load
+      fetchClassesAndPopulate();
     </script>
-</body>
-
+  </body>
 </html>

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Class Attendance QR Code Generator</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Popper JS -->
@@ -15,96 +17,206 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-
-</head>
-<body>
+  </head>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
     <div class="container py-5">
-        <h2 class="mb-4">Class Attendance QR Code Generator</h2>
-        <div class="row row-cols-1 row-cols-md-3 g-4" id="classButtons">
-            <!-- Buttons will be dynamically added here -->
-        </div>
-        <div id="qrcode" style="margin-top: 20px;"></div> <!-- Container for the QR Code -->
+      <h2 class="mb-4">Class Attendance QR Code Generator</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="classButtons">
+        <!-- Buttons will be dynamically added here -->
+      </div>
+      <h3 class="mb-4">Replacement QR</h3>
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="replacementButtons">
+        <!-- Replacement buttons will be dynamically added here -->
+      </div>
+      <div id="qrcode" style="margin-top: 20px"></div>
+      <!-- Container for the QR Code -->
     </div>
-	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-  authDomain: "utarapp-9f3db.firebaseapp.com",
-  authDomain: "pctan9491.github.io",
-  projectId: "utarapp-9f3db",
-  storageBucket: "utarapp-9f3db.appspot.com",
-  messagingSenderId: "331019317153",
-  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-        firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-function fetchClassSchedules() {
-console.log("Fetching class schedules..."); // Debugging log
-const loggedInLecturerId = localStorage.getItem('saveLoginID');
-    db.collection("timetable")
-	.where('lecturerTutor', '==', loggedInLecturerId)
-    .where('approved', '==', true)
-	.get().then((querySnapshot) => {
-			if (querySnapshot.empty) {
-                console.log("No documents found."); // Debugging log
+      function fetchClassSchedules() {
+        console.log("Fetching class schedules..."); // Debugging log
+        const loggedInLecturerId = localStorage.getItem("saveLoginID");
+        db.collection("timetable")
+          .where("lecturerTutor", "==", loggedInLecturerId)
+          .where("approved", "==", true)
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+              console.log("No documents found."); // Debugging log
             }
-        querySnapshot.forEach((doc) => {
-			console.log("Document data:", doc.data()); // Debugging log
-            // Assume doc.data() has fields 'className', 'day', and 'time'
-            const classInfo = doc.data();
-            generateButtonForClass(classInfo);
-        });
-    }).catch((error) => {
-            console.error("Error fetching class schedules:", error); // Error handling
-        });
-}
-
-function generateButtonForClass(classInfo) {
-const colDiv = document.createElement("div");
-    colDiv.className = "col mb-2"; // This is a Bootstrap class for grid columns
-    const button = document.createElement("button");
-    button.className = "btn btn-primary btn-block";
-    
-    // Creating a detailed button text
-    const buttonText = `${classInfo.course} - ${classInfo.classType} at ${classInfo.startTime} in ${classInfo.venue}`;
-    button.innerText = buttonText;
-
-    // Use data attributes to store detailed class info, if needed
-    button.setAttribute('data-course', classInfo.course);
-    button.setAttribute('data-classType', classInfo.classType);
-    button.setAttribute('data-startTime', classInfo.startTime);
-    button.setAttribute('data-venue', classInfo.venue);
-
-    // Adjust onclick function to include all necessary details
-    button.onclick = function() {
-        // Example of using data attributes in the URL, adjust as needed
-        const urlParams = `?subject=${encodeURIComponent(classInfo.course)}&classType=${encodeURIComponent(classInfo.classType)}&startTime=${encodeURIComponent(classInfo.startTime)}&venue=${encodeURIComponent(classInfo.venue)}`;
-        window.location.href = `classDates.html${urlParams}`;
-    };
-	 colDiv.appendChild(button);
-    document.getElementById("classButtons").appendChild(colDiv);
-}
-
-
-
-    function generateQRCode(classInfo) {
-            const qrText = `Class: ${classInfo.course}, Day: ${classInfo.day}, Time: ${classInfo.startTime}`;
-            document.getElementById("qrcode").innerHTML = ""; // Clear previous QR code
-            new QRCode(document.getElementById("qrcode"), {
-                text: qrText,
-                width: 128,
-                height: 128,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
+            querySnapshot.forEach((doc) => {
+              console.log("Document data:", doc.data()); // Debugging log
+              // Assume doc.data() has fields 'className', 'day', and 'time'
+              const classInfo = doc.data();
+              generateButtonForClass(classInfo);
             });
-        }
+          })
+          .catch((error) => {
+            console.error("Error fetching class schedules:", error); // Error handling
+          });
+      }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchClassSchedules();
-        }, false);
-		</script>
-</body>
+      function fetchReplacementClasses() {
+        console.log("Fetching replacement classes..."); // Debugging log
+        const loggedInLecturerId = localStorage.getItem("saveLoginID");
+        db.collection("replacement")
+          .where("approved", "==", true)
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+              console.log("No replacement classes found."); // Debugging log
+            }
+            querySnapshot.forEach((doc) => {
+              console.log("Replacement document data:", doc.data()); // Debugging log
+              const replacementInfo = doc.data();
+              const timetableId = replacementInfo.timetableId;
+
+              // Fetch the corresponding timetable document to get classType and lecturerTutor
+              db.collection("timetable")
+                .doc(timetableId)
+                .get()
+                .then((timetableDoc) => {
+                  if (timetableDoc.exists) {
+                    const timetableData = timetableDoc.data();
+                    replacementInfo.classType = timetableData.classType;
+
+                    // Check if the lecturerTutor matches the loggedInLecturerId
+                    if (timetableData.lecturerTutor === loggedInLecturerId) {
+                      generateButtonForReplacementClass(replacementInfo);
+                    } else {
+                      console.log(
+                        "Skipping replacement class due to lecturerTutor mismatch"
+                      );
+                    }
+                  } else {
+                    console.error(
+                      "Error fetching timetable document for replacement class"
+                    );
+                  }
+                })
+                .catch((error) => {
+                  console.error(
+                    "Error fetching timetable document for replacement class:",
+                    error
+                  );
+                });
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching replacement classes:", error); // Error handling
+          });
+      }
+
+      function generateButtonForClass(classInfo) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "col mb-2"; // This is a Bootstrap class for grid columns
+        const button = document.createElement("button");
+        button.className = "btn btn-primary btn-block";
+
+        // Creating a detailed button text
+        const buttonText = `${classInfo.course} - ${classInfo.classType} at ${classInfo.startTime} in ${classInfo.venue}`;
+        button.innerText = buttonText;
+
+        // Use data attributes to store detailed class info, if needed
+        button.setAttribute("data-course", classInfo.course);
+        button.setAttribute("data-classType", classInfo.classType);
+        button.setAttribute("data-startTime", classInfo.startTime);
+        button.setAttribute("data-venue", classInfo.venue);
+
+        // Adjust onclick function to include all necessary details
+        button.onclick = function () {
+          // Example of using data attributes in the URL, adjust as needed
+          const urlParams = `?subject=${encodeURIComponent(
+            classInfo.course
+          )}&classType=${encodeURIComponent(
+            classInfo.classType
+          )}&startTime=${encodeURIComponent(
+            classInfo.startTime
+          )}&venue=${encodeURIComponent(classInfo.venue)}`;
+          window.location.href = `classDates.html${urlParams}`;
+        };
+        colDiv.appendChild(button);
+        document.getElementById("classButtons").appendChild(colDiv);
+      }
+
+      function generateButtonForReplacementClass(replacementInfo) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "col mb-2"; // This is a Bootstrap class for grid columns
+        const button = document.createElement("button");
+        button.className = "btn btn-success btn-block";
+
+        // Creating a detailed button text
+        const buttonText = `Replacement: ${replacementInfo.courseCode} - ${replacementInfo.classType} on ${replacementInfo.date} at ${replacementInfo.startTime} in ${replacementInfo.venue}`;
+        button.innerText = buttonText;
+
+        // Use data attributes to store detailed class info, if needed
+        button.setAttribute("data-courseCode", replacementInfo.courseCode);
+        button.setAttribute("data-classType", replacementInfo.classType);
+        button.setAttribute("data-date", replacementInfo.date);
+        button.setAttribute("data-startTime", replacementInfo.startTime);
+        button.setAttribute("data-venue", replacementInfo.venue);
+
+        // Adjust onclick function to include all necessary details
+        button.onclick = function () {
+          const subject = replacementInfo.courseCode;
+          const classType = replacementInfo.classType;
+          const selectedDate = replacementInfo.date;
+          const startTime = replacementInfo.startTime;
+          const venue = replacementInfo.venue;
+          const queryParams = new URLSearchParams({
+            date: selectedDate,
+            subject: subject,
+            classType: classType,
+            startTime: startTime,
+            venue: venue,
+          }).toString();
+
+          // Redirect to the QR code generation page with query parameters
+          window.location.href = `generateQR.html?${queryParams}`;
+        };
+        colDiv.appendChild(button);
+        document.getElementById("replacementButtons").appendChild(colDiv);
+      }
+
+      function generateQRCode(classInfo) {
+        const qrText = `Class: ${classInfo.course}, Day: ${classInfo.day}, Time: ${classInfo.startTime}`;
+        document.getElementById("qrcode").innerHTML = ""; // Clear previous QR code
+        new QRCode(document.getElementById("qrcode"), {
+          text: qrText,
+          width: 128,
+          height: 128,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+        });
+      }
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          fetchClassSchedules();
+          fetchReplacementClasses();
+        },
+        false
+      );
+    </script>
+  </body>
+</html>

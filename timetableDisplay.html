@@ -1,203 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lecturer/Tutor Timetable</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
     <div class="container mt-5">
-        <h2 class="mb-4 text-center">Your Timetable</h2>
+      <h2 class="mb-4 text-center">Your Timetable</h2>
 
-        <!-- Timetable Grid -->
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th scope="col">Time/Day</th>
-                    <th scope="col">Monday</th>
-                    <th scope="col">Tuesday</th>
-                    <th scope="col">Wednesday</th>
-                    <th scope="col">Thursday</th>
-                    <th scope="col">Friday</th>
-                </tr>
-            </thead>
-            <tbody id="timetable-grid">
-    <!-- Time slots in half-hour increments from 8:00AM to 6:30PM -->
-    <tr id="time-0800">
-        <th scope="row">08:00AM - 08:30AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-0830">
-        <th scope="row">08:30AM - 09:00AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-0900">
-        <th scope="row">09:00AM - 09:30AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-0930">
-        <th scope="row">09:30AM - 10:00AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <!-- ... Continue the pattern for the rest of the day -->
-    <tr id="time-1000">
-        <th scope="row">10:00AM - 10:30AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1030">
-        <th scope="row">10:30AM - 11:00AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1100">
-        <th scope="row">11:00AM - 11:30AM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1130">
-        <th scope="row">11:30AM - 12:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1200">
-        <th scope="row">12:00PM - 12:30PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1230">
-        <th scope="row">12:30PM - 01:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1300">
-        <th scope="row">01:00PM - 01:30PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1330">
-        <th scope="row">01:30PM - 02:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1400">
-        <th scope="row">02:00PM - 02:30PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1430">
-        <th scope="row">02:30PM - 03:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1500">
-        <th scope="row">03:00PM - 03:30PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1530">
-        <th scope="row">03:30PM - 04:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1600">
-        <th scope="row">04:00PM - 04:30PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1630">
-        <th scope="row">04:30PM - 05:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1700">
-        <th scope="row">05:00PM - 05:30PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1730">
-        <th scope="row">05:30PM - 06:00PM</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-    <tr id="time-1800">
-        <th scope="row">06:00PM - ~</th>
-        <td class="monday"></td>
-        <td class="tuesday"></td>
-        <td class="wednesday"></td>
-        <td class="thursday"></td>
-        <td class="friday"></td>
-    </tr>
-</tbody>
-
-        </table>
+      <!-- Timetable Grid -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Time/Day</th>
+            <th scope="col">Monday</th>
+            <th scope="col">Tuesday</th>
+            <th scope="col">Wednesday</th>
+            <th scope="col">Thursday</th>
+            <th scope="col">Friday</th>
+          </tr>
+        </thead>
+        <tbody id="timetable-grid">
+          <!-- Time slots in half-hour increments from 8:00AM to 6:30PM -->
+          <tr id="time-0800">
+            <th scope="row">08:00AM - 08:30AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-0830">
+            <th scope="row">08:30AM - 09:00AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-0900">
+            <th scope="row">09:00AM - 09:30AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-0930">
+            <th scope="row">09:30AM - 10:00AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <!-- ... Continue the pattern for the rest of the day -->
+          <tr id="time-1000">
+            <th scope="row">10:00AM - 10:30AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1030">
+            <th scope="row">10:30AM - 11:00AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1100">
+            <th scope="row">11:00AM - 11:30AM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1130">
+            <th scope="row">11:30AM - 12:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1200">
+            <th scope="row">12:00PM - 12:30PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1230">
+            <th scope="row">12:30PM - 01:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1300">
+            <th scope="row">01:00PM - 01:30PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1330">
+            <th scope="row">01:30PM - 02:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1400">
+            <th scope="row">02:00PM - 02:30PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1430">
+            <th scope="row">02:30PM - 03:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1500">
+            <th scope="row">03:00PM - 03:30PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1530">
+            <th scope="row">03:30PM - 04:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1600">
+            <th scope="row">04:00PM - 04:30PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1630">
+            <th scope="row">04:30PM - 05:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1700">
+            <th scope="row">05:00PM - 05:30PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1730">
+            <th scope="row">05:30PM - 06:00PM</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+          <tr id="time-1800">
+            <th scope="row">06:00PM - ~</th>
+            <td class="monday"></td>
+            <td class="tuesday"></td>
+            <td class="wednesday"></td>
+            <td class="thursday"></td>
+            <td class="friday"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Include Bootstrap JavaScript and other necessary scripts -->
@@ -207,88 +213,95 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-
-
     <script>
-
-	document.addEventListener('DOMContentLoaded', (event) => {
+      document.addEventListener("DOMContentLoaded", (event) => {
         const firebaseConfig = {
-            apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-        authDomain: "utarapp-9f3db.firebaseapp.com",
-        projectId: "utarapp-9f3db",
-        storageBucket: "utarapp-9f3db.appspot.com",
-        messagingSenderId: "331019317153",
-        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+          apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+          authDomain: "utarapp-9f3db.firebaseapp.com",
+          projectId: "utarapp-9f3db",
+          storageBucket: "utarapp-9f3db.appspot.com",
+          messagingSenderId: "331019317153",
+          appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-function populateTimetable() {
-    const loggedInLecturerId = localStorage.getItem('saveLoginID');
-    
-    const timetableQuery = db.collection('timetable')
-                             .where('lecturerTutor', '==', loggedInLecturerId)
-                             .where('approved', '==', true);
-    
-    timetableQuery.get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            const data = doc.data();
+        function populateTimetable() {
+          const loggedInLecturerId = localStorage.getItem("saveLoginID");
 
-            const day = data.day;
-            const startTime = data.startTime;
-            const endTime = data.endTime;
-            const courseCode = data.course;
-            const venue = data.venue;
+          const timetableQuery = db
+            .collection("timetable")
+            .where("lecturerTutor", "==", loggedInLecturerId)
+            .where("approved", "==", true);
 
-            // Fetch the course title from the course collection
-            db.collection('course').where('courseCode', '==', courseCode).get()
-                .then((courseSnapshot) => {
+          timetableQuery
+            .get()
+            .then((snapshot) => {
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+
+                const day = data.day;
+                const startTime = data.startTime;
+                const endTime = data.endTime;
+                const courseCode = data.course;
+                const venue = data.venue;
+
+                // Fetch the course title from the course collection
+                db.collection("course")
+                  .where("courseCode", "==", courseCode)
+                  .get()
+                  .then((courseSnapshot) => {
                     if (!courseSnapshot.empty) {
-                        const courseData = courseSnapshot.docs[0].data();
-                        const title = courseData.courseTitle;
+                      const courseData = courseSnapshot.docs[0].data();
+                      const title = courseData.courseTitle;
 
-                        // Convert times to suitable format for calculations
-                        const startHour = parseInt(startTime.split(':')[0]);
-                        const startMinute = parseInt(startTime.split(':')[1]);
-                        const endHour = parseInt(endTime.split(':')[0]);
-                        const endMinute = parseInt(endTime.split(':')[1]);
+                      // Convert times to suitable format for calculations
+                      const startHour = parseInt(startTime.split(":")[0]);
+                      const startMinute = parseInt(startTime.split(":")[1]);
+                      const endHour = parseInt(endTime.split(":")[0]);
+                      const endMinute = parseInt(endTime.split(":")[1]);
 
-                        // Calculate the number of cells to merge
-                        const duration = (endHour - startHour) * 2 + (endMinute - startMinute) / 30;
+                      // Calculate the number of cells to merge
+                      const duration =
+                        (endHour - startHour) * 2 +
+                        (endMinute - startMinute) / 30;
 
-                        // Convert start time to match the timetable row ids
-                        const startTimeFormatted = ('0' + startHour).slice(-2) + ('0' + startMinute).slice(-2);
+                      // Convert start time to match the timetable row ids
+                      const startTimeFormatted =
+                        ("0" + startHour).slice(-2) +
+                        ("0" + startMinute).slice(-2);
 
-                        // Find the starting cell
-                        const cell = document.querySelector(`#time-${startTimeFormatted} .${day.toLowerCase()}`);
+                      // Find the starting cell
+                      const cell = document.querySelector(
+                        `#time-${startTimeFormatted} .${day.toLowerCase()}`
+                      );
 
-                        if (cell) {
-                            // Merge the cells based on the duration
-                            cell.rowSpan = duration;
+                      if (cell) {
+                        // Merge the cells based on the duration
+                        cell.rowSpan = duration;
 
-                            // Color the cell and add the course details
-                            cell.style.backgroundColor = "#90ee90";  // Light green
-                            cell.style.fontWeight = "bold";
-                            cell.style.textAlign = "center";
-                            cell.style.verticalAlign = "middle";
-                            cell.innerText = `${title}\n${courseCode}\n${venue}\n${startTime} - ${endTime}`;
-                        }
+                        // Color the cell and add the course details
+                        cell.style.backgroundColor = "#90ee90"; // Light green
+                        cell.style.fontWeight = "bold";
+                        cell.style.textAlign = "center";
+                        cell.style.verticalAlign = "middle";
+                        cell.innerText = `${title}\n${courseCode}\n${venue}\n${startTime} - ${endTime}`;
+                      }
                     }
-                })
-                .catch((error) => {
+                  })
+                  .catch((error) => {
                     console.error("Error fetching course title:", error);
-                });
-        });
-    }).catch((error) => {
-        console.error("Error fetching timetable:", error);
-    });
-}
+                  });
+              });
+            })
+            .catch((error) => {
+              console.error("Error fetching timetable:", error);
+            });
+        }
 
-// Call the populateTimetable function when the page loads
-populateTimetable();
-});
-
+        // Call the populateTimetable function when the page loads
+        populateTimetable();
+      });
     </script>
-</body>
-
+  </body>
 </html>

@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Class Dates</title>
-        <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Popper JS -->
@@ -13,144 +16,157 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-</head>
-<body>
-<div class="container py-5">
-    <h2 id="classTitle">Class Dates</h2>
-    <form id="dateForm">
+  </head>
+  <body>
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
+    <div class="container py-5">
+      <h2 id="classTitle">Class Dates</h2>
+      <form id="dateForm">
         <div class="form-group">
-            <label for="dateDropdown">Select Date</label>
-            <select id="dateDropdown" class="form-control mb-3">
-                <!-- Options will be dynamically added here -->
-            </select>
+          <label for="dateDropdown">Select Date</label>
+          <select id="dateDropdown" class="form-control mb-3">
+            <!-- Options will be dynamically added here -->
+          </select>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Generate QR Code</button>
-    </form>
-</div>
-	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+        <button type="submit" class="btn btn-primary btn-block">
+          Generate QR Code
+        </button>
+      </form>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script>
-        const firebaseConfig = {
-              apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
-  authDomain: "utarapp-9f3db.firebaseapp.com",
-  authDomain: "pctan9491.github.io",
-  projectId: "utarapp-9f3db",
-  storageBucket: "utarapp-9f3db.appspot.com",
-  messagingSenderId: "331019317153",
-  appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-        };
-        firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+      const firebaseConfig = {
+        apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
+        authDomain: "utarapp-9f3db.firebaseapp.com",
+        authDomain: "pctan9491.github.io",
+        projectId: "utarapp-9f3db",
+        storageBucket: "utarapp-9f3db.appspot.com",
+        messagingSenderId: "331019317153",
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const subject = urlParams.get('subject');
-			    const classType = urlParams.get('classType');
-    const startTime = urlParams.get('startTime');
-    const venue = urlParams.get('venue');
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subject = urlParams.get("subject");
+        const classType = urlParams.get("classType");
+        const startTime = urlParams.get("startTime");
+        const venue = urlParams.get("venue");
 
-            document.getElementById('classTitle').innerText = `Dates for ${subject} (${classType} at ${startTime} in ${venue})`;
+        document.getElementById(
+          "classTitle"
+        ).innerText = `Dates for ${subject} (${classType} at ${startTime} in ${venue})`;
 
-            fetchClassDates(subject, classType, startTime, venue);
-        });
+        fetchClassDates(subject, classType, startTime, venue);
+      });
 
-        function fetchClassDates(subject, classType, startTime, venue) {
-            db.collection("timetable")
-              .where("course", "==", subject)
-			  .where("classType", "==", classType)
-      .where("startTime", "==", startTime)
-      .where("venue", "==", venue)
-              .get()
-              .then((querySnapshot) => {
-                  querySnapshot.forEach((doc) => {
-                      const classInfo = doc.data();
-                      calculateDatesForDay(classInfo.day, classInfo.intakeTime); // Use the day to calculate dates
-                  });
-              });
-        }
-		
-		    function calculateDatesForDay(dayOfWeek, intakeTime) {
+      function fetchClassDates(subject, classType, startTime, venue) {
+        db.collection("timetable")
+          .where("course", "==", subject)
+          .where("classType", "==", classType)
+          .where("startTime", "==", startTime)
+          .where("venue", "==", venue)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const classInfo = doc.data();
+              calculateDatesForDay(classInfo.day, classInfo.intakeTime); // Use the day to calculate dates
+            });
+          });
+      }
+
+      function calculateDatesForDay(dayOfWeek, intakeTime) {
         // Assuming you want to calculate dates for the current year
         const year = new Date().getFullYear();
-		db.collection("intake")
-		.where("intake", "==", intakeTime)
-		.get()
-		.then((querySnapshot) => {
-		querySnapshot.forEach((doc) => {
-		const intakeInfo = doc.data();
-const startDate = intakeInfo.startDate.toDate(); // Assuming startDate is a Timestamp
+        db.collection("intake")
+          .where("intake", "==", intakeTime)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const intakeInfo = doc.data();
+              const startDate = intakeInfo.startDate.toDate(); // Assuming startDate is a Timestamp
               const endDate = intakeInfo.endDate.toDate(); // Assuming endDate is a Timestamp
               let dates = getDatesForDayOfWeek(dayOfWeek, startDate, endDate);
 
-        dates.forEach(date => {
-            addDateToDropdown(date.toDateString());
-        });
-		});
+              dates.forEach((date) => {
+                addDateToDropdown(date.toDateString());
               });
-    }
-	
-	    function getDatesForDayOfWeek(dayOfWeek, startDate, endDate) {
+            });
+          });
+      }
+
+      function getDatesForDayOfWeek(dayOfWeek, startDate, endDate) {
         let dates = [];
         let currentDate = new Date(startDate.getTime());
 
         // Days mapping to get the day index needed for calculation
         const dayMapping = {
-            "Sunday": 0,
-            "Monday": 1,
-            "Tuesday": 2,
-            "Wednesday": 3,
-            "Thursday": 4,
-            "Friday": 5,
-            "Saturday": 6
+          Sunday: 0,
+          Monday: 1,
+          Tuesday: 2,
+          Wednesday: 3,
+          Thursday: 4,
+          Friday: 5,
+          Saturday: 6,
         };
         let dayIndex = dayMapping[dayOfWeek];
 
         // Adjust the first date to the first occurrence of the dayOfWeek
-        currentDate.setDate(currentDate.getDate() + (dayIndex - currentDate.getDay() + 7) % 7);
+        currentDate.setDate(
+          currentDate.getDate() + ((dayIndex - currentDate.getDay() + 7) % 7)
+        );
 
         // Loop from the first occurrence to the end date
         while (currentDate <= endDate) {
-            dates.push(new Date(currentDate));
-            currentDate.setDate(currentDate.getDate() + 7); // Next week
+          dates.push(new Date(currentDate));
+          currentDate.setDate(currentDate.getDate() + 7); // Next week
         }
 
         return dates;
-    }
+      }
 
-function addDateToDropdown(date) {
-    const option = document.createElement("option");
-    option.value = date;
-    option.innerText = date;
-    document.getElementById("dateDropdown").appendChild(option);
-}
+      function addDateToDropdown(date) {
+        const option = document.createElement("option");
+        option.value = date;
+        option.innerText = date;
+        document.getElementById("dateDropdown").appendChild(option);
+      }
 
-document.getElementById('dateForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting the traditional way
-        
-        const selectedDate = document.getElementById('dateDropdown').value;
-        if(!selectedDate) {
+      document
+        .getElementById("dateForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the form from submitting the traditional way
+
+          const selectedDate = document.getElementById("dateDropdown").value;
+          if (!selectedDate) {
             alert("Please select a date before generating the QR code.");
             return;
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-    const subject = urlParams.get('subject');
-    const classType = urlParams.get('classType');
-    const startTime = urlParams.get('startTime');
-    const venue = urlParams.get('venue');
+          }
+          const urlParams = new URLSearchParams(window.location.search);
+          const subject = urlParams.get("subject");
+          const classType = urlParams.get("classType");
+          const startTime = urlParams.get("startTime");
+          const venue = urlParams.get("venue");
 
-        // Construct the URL for the QR code generation page with selected date
-        const queryParams = new URLSearchParams({
+          // Construct the URL for the QR code generation page with selected date
+          const queryParams = new URLSearchParams({
             date: selectedDate,
-			subject: subject,
-			classType: classType,
-			startTime: startTime,
-			venue: venue
+            subject: subject,
+            classType: classType,
+            startTime: startTime,
+            venue: venue,
             // You can add other parameters if needed
-        }).toString();
+          }).toString();
 
-        // Redirect to the QR code generation page with query parameters
-        window.location.href = `generateQR.html?${queryParams}`;
-    });
+          // Redirect to the QR code generation page with query parameters
+          window.location.href = `generateQR.html?${queryParams}`;
+        });
     </script>
-</body>
+  </body>
 </html>

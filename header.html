@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Prevent any scroll */
+        height: 100%; /* Ensure full coverage of the viewport in the iframe */
+      }
+      header {
+        background-color: transparent; /* Transparent background */
+        color: #333333; /* Dark text color for visibility */
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #2c3e50; /* Subtle dark border for definition */
+        justify-content: flex-start; /* Align button to the left */
+      }
+
+      header button {
+        padding: 10px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        outline: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+      }
+
+      .backIcon {
+        display: block;
+        width: 24px;
+        height: 24px;
+        background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" fill="%232c3e50" viewBox="0 0 256 256"%3e%3cpath d="M192 219.313L100.687 128 192 36.687 169.313 14 64 119.313 169.313 224.687 192 202.313 109.313 119.313 192 219.313z"%3e%3c/path%3e%3c/svg%3e');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      @media (max-width: 480px) {
+        header {
+          padding: 10px 15px;
+        }
+        .backIcon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <button id="backButton"><span class="backIcon"></span></button>
+    </header>
+    <script>
+      document
+        .getElementById("backButton")
+        .addEventListener("click", function () {
+          window.history.back();
+        });
+    </script>
+  </body>
+</html>

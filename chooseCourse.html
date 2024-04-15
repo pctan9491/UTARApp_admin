@@ -1,173 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Choose Course</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
 
-<body class="bg-light">
+  <body class="bg-light">
+    <iframe
+      src="header.html"
+      frameborder="0"
+      style="width: 100%; height: 60px"
+    ></iframe>
     <div class="container mt-5">
-        <h2 class="mb-4">Assign Course to Lecturer/Tutor</h2>
-        <form id="assignCourseForm">
+      <h2 class="mb-4">Assign Course to Lecturer/Tutor</h2>
+      <form id="assignCourseForm">
+        <!-- Faculty Dropdown -->
+        <div class="form-group">
+          <label for="facultyDropdown">Faculty:</label>
+          <select
+            class="form-control"
+            id="facultyDropdown"
+            name="facultyDropdown"
+            required
+          >
+            <option value="" disabled selected>Select a faculty</option>
+            <option value="FAM">FACULTY OF ACCOUNTANCY AND MANAGEMENT</option>
+            <option value="FAS">FACULTY OF ARTS AND SOCIAL SCIENCE</option>
+            <option value="FBF">FACULTY OF BUSINESS AND FINANCE</option>
+            <option value="FCI">FACULTY OF CREATIVE INDUSTRIES</option>
+            <option value="FEGT">
+              FACULTY OF ENGINEERING AND GREEN TECHNOLOGY
+            </option>
+            <option value="FICT">
+              FACULTY OF INFORMATION AND COMMUNICATION TECHNOLOGY
+            </option>
+            <option value="FSC">FACULTY OF SCIENCE</option>
+            <option value="ICS">INSTITUTE OF CHINESE STUDIES</option>
+            <option value="LKC FES">
+              LEE KONG CHIAN FACULTY OF ENGINEERING AND SCIENCE
+            </option>
+            <option value="MK FMHS">
+              M. KANDIAH FACULTY OF MEDICINE AND HEALTH SCIENCES
+            </option>
+            <option value="other">Others</option>
+          </select>
+        </div>
 
-            <!-- Faculty Dropdown -->
-            <div class="form-group">
-                <label for="facultyDropdown">Faculty:</label>
-                <select class="form-control" id="facultyDropdown" name="facultyDropdown" required>
-                    <option value="" disabled selected>Select a faculty</option>
-                    <option value="FAM">FACULTY OF ACCOUNTANCY AND MANAGEMENT</option>
-                    <option value="FAS">FACULTY OF ARTS AND SOCIAL SCIENCE</option>
-                    <option value="FBF">FACULTY OF BUSINESS AND FINANCE</option>
-                    <option value="FCI">FACULTY OF CREATIVE INDUSTRIES</option>
-                    <option value="FEGT">FACULTY OF ENGINEERING AND GREEN TECHNOLOGY</option>
-                    <option value="FICT">FACULTY OF INFORMATION AND COMMUNICATION TECHNOLOGY</option>
-					<option value="FSC">FACULTY OF SCIENCE</option>
-                    <option value="ICS">INSTITUTE OF CHINESE STUDIES</option>
-                    <option value="LKC FES">LEE KONG CHIAN FACULTY OF ENGINEERING AND SCIENCE</option>
-                    <option value="MK FMHS">M. KANDIAH FACULTY OF MEDICINE AND HEALTH SCIENCES</option>
-                    <option value="other">Others</option>
-                </select>
-            </div>
+        <!-- Lecturer/Tutor Dropdown -->
+        <div class="form-group">
+          <label for="lecturerTutorDropdown">Lecturer/Tutor:</label>
+          <select
+            class="form-control"
+            id="lecturerTutorDropdown"
+            name="lecturerTutorDropdown"
+            required
+          >
+            <option value="" disabled selected>-</option>
+          </select>
+        </div>
 
-            <!-- Lecturer/Tutor Dropdown -->
-            <div class="form-group">
-                <label for="lecturerTutorDropdown">Lecturer/Tutor:</label>
-                <select class="form-control" id="lecturerTutorDropdown" name="lecturerTutorDropdown" required>
-                    <option value="" disabled selected>-</option>
-                </select>
-            </div>
+        <!-- Course Dropdown -->
+        <div class="form-group">
+          <label for="courseDropdown">Course:</label>
+          <select
+            class="form-control"
+            id="courseDropdown"
+            name="courseDropdown"
+            required
+          >
+            <option value="" disabled selected>-</option>
+          </select>
+        </div>
 
-            <!-- Course Dropdown -->
-            <div class="form-group">
-                <label for="courseDropdown">Course:</label>
-                <select class="form-control" id="courseDropdown" name="courseDropdown" required>
-                    <option value="" disabled selected>-</option>
-                </select>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Assign</button>
-        </form>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Assign</button>
+      </form>
     </div>
 
     <!-- Include Bootstrap JavaScript and other necessary scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-			<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script>
-const firebaseConfig = {
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+      const firebaseConfig = {
         apiKey: "AIzaSyBtSdg0XwU3cePNEn-HVlof8vj_imx0guA",
         authDomain: "utarapp-9f3db.firebaseapp.com",
         projectId: "utarapp-9f3db",
         storageBucket: "utarapp-9f3db.appspot.com",
         messagingSenderId: "331019317153",
-        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-	 // References to dropdown elements
-    const facultyDropdown = document.getElementById('facultyDropdown');
-    const lecturerTutorDropdown = document.getElementById('lecturerTutorDropdown');
-    const courseDropdown = document.getElementById('courseDropdown');
+        appId: "1:331019317153:web:79d3d098d6d5c3759da5e0",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      // References to dropdown elements
+      const facultyDropdown = document.getElementById("facultyDropdown");
+      const lecturerTutorDropdown = document.getElementById(
+        "lecturerTutorDropdown"
+      );
+      const courseDropdown = document.getElementById("courseDropdown");
 
-    facultyDropdown.addEventListener('change', async () => {
+      facultyDropdown.addEventListener("change", async () => {
         const selectedFaculty = facultyDropdown.value;
 
         // Clear previous options
-        lecturerTutorDropdown.innerHTML = '';
-        courseDropdown.innerHTML = '';
+        lecturerTutorDropdown.innerHTML = "";
+        courseDropdown.innerHTML = "";
 
         try {
-            // Fetch lecturers/tutors based on faculty
-            const lecturerTutorQuery = db.collection("lecturer")
-                .where('faculty', '==', selectedFaculty);
+          // Fetch lecturers/tutors based on faculty
+          const lecturerTutorQuery = db
+            .collection("lecturer")
+            .where("faculty", "==", selectedFaculty);
 
-            const lecturersTutorsSnapshot = await lecturerTutorQuery.get();
-            lecturersTutorsSnapshot.forEach(doc => {
-                const data = doc.data();
-                const option = document.createElement('option');
-                option.value = data.lectutId; // assuming you have a unique ID for each lecturer/tutor
-                option.textContent = data.name; // assuming 'name' field exists in your user data
-                lecturerTutorDropdown.appendChild(option);
+          const lecturersTutorsSnapshot = await lecturerTutorQuery.get();
+          lecturersTutorsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const option = document.createElement("option");
+            option.value = data.lectutId; // assuming you have a unique ID for each lecturer/tutor
+            option.textContent = data.name; // assuming 'name' field exists in your user data
+            lecturerTutorDropdown.appendChild(option);
+          });
+
+          // Fetch courses based on faculty
+          const courseQuery = db
+            .collection("course")
+            .where("faculty", "array-contains", selectedFaculty);
+          courseQuery
+            .get()
+            .then((coursesSnapshot) => {
+              if (coursesSnapshot.empty) {
+                console.log(
+                  "No matching courses found for faculty:",
+                  selectedFaculty
+                );
+              } else {
+                // existing code to process the snapshot
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching courses:", error);
             });
 
-            // Fetch courses based on faculty
-           const courseQuery = db.collection("course").where('faculty', 'array-contains', selectedFaculty);
-			courseQuery.get()
-    .then(coursesSnapshot => {
-        if (coursesSnapshot.empty) {
-            console.log("No matching courses found for faculty:", selectedFaculty);
-        } else {
-            // existing code to process the snapshot
-        }
-    })
-    .catch(error => {
-        console.error("Error fetching courses:", error);
-    });
-
-            const coursesSnapshot = await courseQuery.get();
-            coursesSnapshot.forEach(doc => {
-                const data = doc.data();
-                const option = document.createElement('option');
-                option.value = data.courseCode; // assuming you have a unique code for each course
-                option.textContent = data.courseTitle; // assuming 'courseName' field exists in your course data
-                courseDropdown.appendChild(option);
-            });
-
+          const coursesSnapshot = await courseQuery.get();
+          coursesSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const option = document.createElement("option");
+            option.value = data.courseCode; // assuming you have a unique code for each course
+            option.textContent = data.courseTitle; // assuming 'courseName' field exists in your course data
+            courseDropdown.appendChild(option);
+          });
         } catch (error) {
-            console.error("Error fetching data based on faculty:", error);
+          console.error("Error fetching data based on faculty:", error);
         }
-    });
-	
-// Assign lecturer
-document.getElementById("assignCourseForm").addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevents the default form submission
+      });
 
-    const selectedLecturerTutor = lecturerTutorDropdown.value;
-    const selectedCourseCode = courseDropdown.value;
+      // Assign lecturer
+      document
+        .getElementById("assignCourseForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault(); // Prevents the default form submission
 
-    if (selectedLecturerTutor && selectedCourseCode) {
-        try {
-            // First, find the document with the matching course code
-            const courseQuery = db.collection("course").where("courseCode", "==", selectedCourseCode);
-            const querySnapshot = await courseQuery.get();
+          const selectedLecturerTutor = lecturerTutorDropdown.value;
+          const selectedCourseCode = courseDropdown.value;
 
-            if (!querySnapshot.empty) {
+          if (selectedLecturerTutor && selectedCourseCode) {
+            try {
+              // First, find the document with the matching course code
+              const courseQuery = db
+                .collection("course")
+                .where("courseCode", "==", selectedCourseCode);
+              const querySnapshot = await courseQuery.get();
+
+              if (!querySnapshot.empty) {
                 const doc = querySnapshot.docs[0];
                 const docData = doc.data();
                 const docID = doc.id; // this is the actual document ID you want
 
                 // Check if the lecturer/tutor is already assigned to the course
-                if (docData.lecturerTaken && docData.lecturerTaken.includes(selectedLecturerTutor)) {
-                    alert("The selected lecturer/tutor is already assigned to this course!");
+                if (
+                  docData.lecturerTaken &&
+                  docData.lecturerTaken.includes(selectedLecturerTutor)
+                ) {
+                  alert(
+                    "The selected lecturer/tutor is already assigned to this course!"
+                  );
                 } else {
-                    // Update the course document with the new lecturer/tutor
-                    await db.collection('course').doc(docID).update({
-                        lecturerTaken: firebase.firestore.FieldValue.arrayUnion(selectedLecturerTutor)
+                  // Update the course document with the new lecturer/tutor
+                  await db
+                    .collection("course")
+                    .doc(docID)
+                    .update({
+                      lecturerTaken: firebase.firestore.FieldValue.arrayUnion(
+                        selectedLecturerTutor
+                      ),
                     });
-                    alert("Successfully assigned the course to the lecturer/tutor!");
+                  alert(
+                    "Successfully assigned the course to the lecturer/tutor!"
+                  );
                 }
-            } else {
-                console.error("No document found with courseCode:", selectedCourseCode);
+              } else {
+                console.error(
+                  "No document found with courseCode:",
+                  selectedCourseCode
+                );
                 alert("No matching course found. Please try again.");
+              }
+            } catch (error) {
+              console.error("Error assigning course to lecturer/tutor:", error);
+              alert("An error occurred. Please try again.");
             }
-        } catch (error) {
-            console.error("Error assigning course to lecturer/tutor:", error);
-            alert("An error occurred. Please try again.");
-        }
-    } else {
-        alert("Please select a lecturer/tutor and a course.");
-    }
-});
-
-
-
-</script>
-</body>
-
+          } else {
+            alert("Please select a lecturer/tutor and a course.");
+          }
+        });
+    </script>
+  </body>
 </html>
