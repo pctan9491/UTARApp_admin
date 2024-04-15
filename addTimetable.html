@@ -3,9 +3,30 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lecturer/Tutor - Add Timetable</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ensure proper visibility of input fields and buttons on mobile devices */
+input[type="time"], button[type="submit"] {
+    -webkit-appearance: none; /* Remove default iOS styling */
+    -moz-appearance: none; /* Remove default Firefox styling */
+    appearance: none; /* Remove default styling */
+    font-size: 16px; /* Adjust font size as needed */
+    color: #333; /* Adjust text color as needed */
+    background-color: #fff; /* Adjust background color as needed */
+    border: 1px solid #ccc; /* Adjust border style as needed */
+    padding: 8px 12px; /* Adjust padding as needed */
+    border-radius: 4px; /* Adjust border radius as needed */
+}
+
+/* Ensure proper visibility and styling of submit button on mobile devices */
+button[type="submit"] {
+    background-color: #007bff; /* Adjust background color as needed */
+    color: #fff; /* Adjust text color as needed */
+    cursor: pointer; /* Add cursor pointer for better UX */
+}
+    </style>
 </head>
 
 <body class="bg-light">
