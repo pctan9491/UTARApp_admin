@@ -1,0 +1,20 @@
+.notification-item {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-title {
+  font-weight: bold;
+}
+
+.notification-date {
+  color: #777;
+}
+
+.notification-description {
+  margin-top: 10px;
+}
