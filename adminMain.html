@@ -54,12 +54,9 @@
                 class="btn btn-primary btn-block mb-3 location-btn"
                 >Add Location</a
               >
-              <a
-                href="#"
-                class="btn btn-secondary btn-block mb-3"
-                id="logoutBtn"
-                >Log Out</a
-              >
+              <button id="logoutBtn" class="btn btn-secondary btn-block">
+                Log Out
+              </button>
             </div>
           </div>
         </div>
@@ -86,11 +83,9 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
 
+      // Log out function
       function logout() {
-        // Clear the saved login ID from local storage
         localStorage.removeItem("saveLoginID");
-
-        // Redirect the user to the login page
         window.location.href = "index.html";
       }
 
@@ -125,9 +120,6 @@
                 document.querySelector(".notification-btn").style.display =
                   "none";
                 document.querySelector(".location-btn").style.display = "none";
-                document.querySelector(
-                  ".approve-student-info-btn"
-                ).style.display = "none";
                 document.querySelector(".container").style.display = "block";
               }
             } else {
@@ -138,6 +130,7 @@
             console.error("Error fetching user data:", error);
           });
 
+        // Add click event listener to the log out button
         document.getElementById("logoutBtn").addEventListener("click", logout);
       });
     </script>
