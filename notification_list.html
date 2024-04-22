@@ -18,7 +18,25 @@
     ></iframe>
     <div class="container mt-5">
       <h2 class="mb-4">Notification List</h2>
-      <div id="notificationList"></div>
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <input
+            type="date"
+            id="searchDate"
+            class="form-control"
+            placeholder="Search by date"
+          />
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex">
+            <button id="searchButton" class="btn btn-primary mr-2">
+              Search
+            </button>
+            <button id="clearButton" class="btn btn-secondary">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div id="notificationList" class="row"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>

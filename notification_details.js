@@ -10,6 +10,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
+const storage = firebase.storage();
 const notificationDetailsContainer = document.getElementById(
   "notificationDetails"
 );
@@ -45,6 +46,32 @@ function displayNotificationDetails(notificationData) {
       <h3>${notificationData.title}</h3>
       <p><strong>Date:</strong> ${notificationData.date}</p>
       <p><strong>Description:</strong> ${notificationData.description}</p>
+      ${
+        notificationData.photoURLs && notificationData.photoURLs.length > 0
+          ? `<div>
+               <strong>Photos:</strong>
+               ${notificationData.photoURLs
+                 .map(
+                   (url) =>
+                     `<img src="${url}" class="notification-image" alt="Notification Photo">`
+                 )
+                 .join("")}
+             </div>`
+          : ""
+      }
+      ${
+        notificationData.fileURLs && notificationData.fileURLs.length > 0
+          ? `<div>
+               <strong>Files:</strong>
+               ${notificationData.fileURLs
+                 .map(
+                   (url) =>
+                     `<div class="notification-file"><a href="${url}" target="_blank">${url}</a></div>`
+                 )
+                 .join("")}
+             </div>`
+          : ""
+      }
     `;
 }
 
@@ -78,20 +105,100 @@ function updateNotification() {
   const editedTitle = document.getElementById("editTitle").value;
   const editedDescription = document.getElementById("editDescription").value;
   const editedDate = document.getElementById("editCurrentDate").value;
+  const editedPhotoUploads = document.getElementById("editPhotoUpload").files;
+  const editedFileUploads = document.getElementById("editFileUpload").files;
 
+  const updateData = {
+    title: editedTitle,
+    description: editedDescription,
+    date: editedDate,
+  };
+
+  // Delete previous photos and files
   db.collection("notification")
     .doc(notificationId)
-    .update({
-      title: editedTitle,
-      description: editedDescription,
-      date: editedDate,
-    })
-    .then(() => {
-      $("#editNotificationModal").modal("hide");
-      fetchNotificationDetails(notificationId);
+    .get()
+    .then((doc) => {
+      const notificationData = doc.data();
+      const deletePromises = [];
+
+      if (notificationData.photoURLs && notificationData.photoURLs.length > 0) {
+        notificationData.photoURLs.forEach((url) => {
+          const deletePromise = storage.refFromURL(url).delete();
+          deletePromises.push(deletePromise);
+        });
+      }
+
+      if (notificationData.fileURLs && notificationData.fileURLs.length > 0) {
+        notificationData.fileURLs.forEach((url) => {
+          const deletePromise = storage.refFromURL(url).delete();
+          deletePromises.push(deletePromise);
+        });
+      }
+
+      Promise.all(deletePromises)
+        .then(() => {
+          // Upload new photos and files
+          const uploadPromises = [];
+
+          const newPhotoURLs = [];
+          for (let i = 0; i < editedPhotoUploads.length; i++) {
+            const photo = editedPhotoUploads[i];
+            const photoRef = storage
+              .ref()
+              .child("NotificationPhotos")
+              .child(photo.name);
+            const uploadPromise = photoRef.put(photo).then((snapshot) => {
+              return snapshot.ref.getDownloadURL();
+            });
+            uploadPromises.push(uploadPromise);
+            uploadPromise.then((url) => {
+              newPhotoURLs.push(url);
+            });
+          }
+          const newFileURLs = [];
+          for (let i = 0; i < editedFileUploads.length; i++) {
+            const file = editedFileUploads[i];
+            const fileRef = storage
+              .ref()
+              .child("NotificationFiles")
+              .child(file.name);
+            const uploadPromise = fileRef.put(file).then((snapshot) => {
+              return snapshot.ref.getDownloadURL();
+            });
+            uploadPromises.push(uploadPromise);
+            uploadPromise.then((url) => {
+              newFileURLs.push(url);
+            });
+          }
+
+          Promise.all(uploadPromises)
+            .then(() => {
+              updateData.photoURLs = newPhotoURLs;
+              updateData.fileURLs = newFileURLs;
+
+              // Update the notification in Firestore
+              db.collection("notification")
+                .doc(notificationId)
+                .update(updateData)
+                .then(() => {
+                  $("#editNotificationModal").modal("hide");
+                  fetchNotificationDetails(notificationId);
+                })
+                .catch((error) => {
+                  console.error("Error updating notification: ", error);
+                });
+            })
+            .catch((error) => {
+              console.error("Error uploading files: ", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error deleting previous files: ", error);
+        });
     })
     .catch((error) => {
-      console.error("Error updating notification: ", error);
+      console.error("Error fetching notification details: ", error);
     });
 }
 
@@ -104,13 +211,43 @@ function deleteNotification() {
 function confirmDelete() {
   db.collection("notification")
     .doc(notificationId)
-    .delete()
-    .then(() => {
-      $("#deleteNotificationModal").modal("hide");
-      window.location.href = "notification_list.html";
+    .get()
+    .then((doc) => {
+      const notificationData = doc.data();
+      const deletePromises = [];
+      if (notificationData.photoURLs && notificationData.photoURLs.length > 0) {
+        notificationData.photoURLs.forEach((url) => {
+          const deletePromise = storage.refFromURL(url).delete();
+          deletePromises.push(deletePromise);
+        });
+      }
+
+      if (notificationData.fileURLs && notificationData.fileURLs.length > 0) {
+        notificationData.fileURLs.forEach((url) => {
+          const deletePromise = storage.refFromURL(url).delete();
+          deletePromises.push(deletePromise);
+        });
+      }
+
+      Promise.all(deletePromises)
+        .then(() => {
+          db.collection("notification")
+            .doc(notificationId)
+            .delete()
+            .then(() => {
+              $("#deleteNotificationModal").modal("hide");
+              window.location.href = "notification_list.html";
+            })
+            .catch((error) => {
+              console.error("Error deleting notification: ", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error deleting files: ", error);
+        });
     })
     .catch((error) => {
-      console.error("Error deleting notification: ", error);
+      console.error("Error fetching notification details: ", error);
     });
 }
 

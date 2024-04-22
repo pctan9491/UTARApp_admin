@@ -17,12 +17,30 @@
       style="width: 100%; height: 60px"
     ></iframe>
     <div class="container mt-5">
-      <h2 class="mb-4">Notification Details</h2>
-      <div id="notificationDetails"></div>
-      <button class="btn btn-primary" onclick="editNotification()">Edit</button>
-      <button class="btn btn-danger" onclick="deleteNotification()">
-        Delete
-      </button>
+      <div class="row">
+        <div class="col-md-8">
+          <h2 class="mb-4">Notification Details</h2>
+          <div id="notificationDetails" class="card p-4"></div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-4">
+            <button
+              class="btn btn-primary btn-block"
+              onclick="editNotification()"
+            >
+              Edit
+            </button>
+          </div>
+          <div>
+            <button
+              class="btn btn-danger btn-block"
+              onclick="deleteNotification()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Edit Notification Modal -->
@@ -34,7 +52,7 @@
       aria-labelledby="editNotificationModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="editNotificationModalLabel">
@@ -78,6 +96,27 @@
                   class="form-control"
                   id="editCurrentDate"
                   name="editCurrentDate"
+                />
+              </div>
+              <div class="form-group">
+                <label for="editPhotoUpload">Upload Photo:</label>
+                <input
+                  type="file"
+                  class="form-control-file"
+                  id="editPhotoUpload"
+                  name="editPhotoUpload"
+                  accept="image/*"
+                  multiple
+                />
+              </div>
+              <div class="form-group">
+                <label for="editFileUpload">Upload File:</label>
+                <input
+                  type="file"
+                  class="form-control-file"
+                  id="editFileUpload"
+                  name="editFileUpload"
+                  multiple
                 />
               </div>
             </form>

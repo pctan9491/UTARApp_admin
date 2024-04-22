@@ -1,10 +1,11 @@
 .notification-item {
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: transform 0.3s;
 }
 
 .notification-item:hover {
-  background-color: #f8f9fa;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .notification-title {
@@ -16,5 +17,15 @@
 }
 
 .notification-description {
+  margin-top: 10px;
+}
+
+.notification-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.notification-file {
   margin-top: 10px;
 }

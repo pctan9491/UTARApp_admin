@@ -11,10 +11,24 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 const notificationListContainer = document.getElementById("notificationList");
+const searchTitleInput = document.getElementById("searchTitle");
+const searchDateInput = document.getElementById("searchDate");
+const searchButton = document.getElementById("searchButton");
+const clearButton = document.getElementById("clearButton");
 
 // Fetch notifications from Firestore
-function fetchNotifications() {
-  db.collection("notification")
+function fetchNotifications(titleFilter = "", dateFilter = "") {
+  let query = db.collection("notification").orderBy("date", "desc");
+
+  if (titleFilter) {
+    query = query.where("title", "==", titleFilter);
+  }
+
+  if (dateFilter) {
+    query = query.where("date", "==", dateFilter);
+  }
+
+  query
     .get()
     .then((querySnapshot) => {
       notificationListContainer.innerHTML = "";
@@ -36,12 +50,14 @@ function fetchNotifications() {
 // Create a notification item element
 function createNotificationItem(notificationId, notificationData) {
   const notificationItem = document.createElement("div");
-  notificationItem.classList.add("notification-item", "mb-3", "p-3", "border");
-  notificationItem.setAttribute("data-id", notificationId);
+  notificationItem.classList.add("col-md-4", "mb-4");
   notificationItem.innerHTML = `
-      <h5 class="notification-title">${notificationData.title}</h5>
-      <p class="notification-date">${notificationData.date}</p>
-      <p class="notification-description">${notificationData.description}</p>
+      <div class="card notification-item">
+        <div class="card-body">
+          <h5 class="notification-title">${notificationData.title}</h5>
+          <p class="notification-date">${notificationData.date}</p>
+        </div>
+      </div>
     `;
   notificationItem.addEventListener("click", () => {
     window.location.href = `notification_details.html?id=${notificationId}`;
@@ -49,5 +65,23 @@ function createNotificationItem(notificationId, notificationData) {
   return notificationItem;
 }
 
+// Search notifications
+function searchNotifications() {
+  const titleFilter = searchTitleInput.value.trim();
+  const dateFilter = searchDateInput.value;
+  fetchNotifications(titleFilter, dateFilter);
+}
+
+// Clear search inputs and fetch all notifications
+function clearSearch() {
+  searchTitleInput.value = "";
+  searchDateInput.value = "";
+  fetchNotifications();
+}
+
 // Fetch notifications on page load
 fetchNotifications();
+
+// Add event listeners to search and clear buttons
+searchButton.addEventListener("click", searchNotifications);
+clearButton.addEventListener("click", clearSearch);
